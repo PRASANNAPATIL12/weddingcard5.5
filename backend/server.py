@@ -545,23 +545,33 @@ app.add_middleware(
 
 # Serve static files and React app
 if FRONTEND_BUILD_PATH.exists():
+    print(f"✅ Frontend build found at: {FRONTEND_BUILD_PATH}")
     app.mount("/static", StaticFiles(directory=str(FRONTEND_BUILD_PATH / "static")), name="static")
     
     @app.get("/{full_path:path}")
     async def serve_react_app(full_path: str):
         """Serve React app for all non-API routes"""
+        print(f"🌐 Serving route: {full_path}")
+        
         # Skip API routes (they are handled by api_router)
         if full_path.startswith("api"):
+            print(f"❌ API route not found: {full_path}")
             raise HTTPException(status_code=404, detail="API endpoint not found")
         
         # Check if it's a direct file request
         if full_path and not full_path.startswith("api"):
             static_file_path = FRONTEND_BUILD_PATH / full_path
             if static_file_path.exists() and static_file_path.is_file():
+                print(f"📁 Serving static file: {static_file_path}")
                 return FileResponse(static_file_path)
         
         # For all other routes (including custom wedding URLs), serve React index.html
-        return FileResponse(FRONTEND_BUILD_PATH / "index.html")
+        index_path = FRONTEND_BUILD_PATH / "index.html"
+        print(f"⚛️ Serving React app: {index_path}")
+        return FileResponse(index_path)
+else:
+    print(f"❌ Frontend build not found at: {FRONTEND_BUILD_PATH}")
+    print("React static file serving disabled")
 
 # Configure logging
 logging.basicConfig(
