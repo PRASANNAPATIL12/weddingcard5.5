@@ -457,23 +457,29 @@ async def get_public_wedding_data(wedding_id: str):
 async def get_wedding_by_shareable_id(shareable_id: str):
     users_coll, weddings_coll = await get_collections()
     
-    # Search for wedding by shareable_id in MongoDB
+    # Search for wedding by shareable_id first (new system)
     wedding = await weddings_coll.find_one({"shareable_id": shareable_id})
+    
+    if not wedding:
+        # If not found by shareable_id, try custom_url (legacy system)
+        wedding = await weddings_coll.find_one({"custom_url": shareable_id})
     
     if wedding:
         # Remove sensitive data for public access
         public_data = {k: v for k, v in wedding.items() if k not in ["user_id", "_id"]}
         return public_data
     
-    # Fallback to JSON file
+    # Fallback to JSON file (legacy system)
     weddings = load_json_file(WEDDINGS_FILE)
     for wedding_id, wedding_data in weddings.items():
-        if wedding_data.get("shareable_id") == shareable_id:
+        # Check both shareable_id and custom_url
+        if (wedding_data.get("shareable_id") == shareable_id or 
+            wedding_data.get("custom_url") == shareable_id):
             # Remove sensitive data for public access
             public_data = {k: v for k, v in wedding_data.items() if k not in ["user_id"]}
             return public_data
     
-    # If not found by shareable ID, return enhanced default data
+    # If not found by shareable ID or custom URL, return enhanced default data
     enhanced_default_data = {
         "id": "default",
         "shareable_id": shareable_id,
