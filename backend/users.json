@@ -131,5 +131,12 @@
     "password": "test123",
     "created_at": "2025-09-18 18:36:47.299984",
     "_id": "68cc513fe1557b4afb2a9702"
+  },
+  "5723dc45-8110-4663-bf1c-8dbba487793e": {
+    "id": "5723dc45-8110-4663-bf1c-8dbba487793e",
+    "username": "ankith_shreya",
+    "password": "testpass123",
+    "created_at": "2025-09-18 19:11:46.350311",
+    "_id": "68cc59722d04c412427a636f"
   }
 }
