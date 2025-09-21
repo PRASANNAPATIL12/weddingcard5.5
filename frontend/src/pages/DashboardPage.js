@@ -47,78 +47,42 @@ import FAQPage from './FAQPage';
 import GuestbookPage from './GuestbookPage';
 
 const DashboardPage = () => {
-  const { themes, currentTheme, setCurrentTheme } = useAppTheme();
-  const theme = themes[currentTheme];
+  const { themes } = useAppTheme();
   const navigate = useNavigate();
   
-  const [previewMode, setPreviewMode] = useState('desktop'); // desktop or mobile
+  // Use centralized user data context instead of local state
+  const { 
+    isAuthenticated, 
+    weddingData, 
+    saveWeddingData, 
+    userInfo, 
+    logout: contextLogout,
+    isLoading: contextLoading 
+  } = useUserData();
+  
+  // Dashboard-specific state
   const [activeSection, setActiveSection] = useState('edit');
-  const [editDropdownOpen, setEditDropdownOpen] = useState(false);
   const [activeForm, setActiveForm] = useState(null);
+  const [editDropdownOpen, setEditDropdownOpen] = useState(true);
+  const [previewMode, setPreviewMode] = useState('desktop');
   const [currentPreviewPage, setCurrentPreviewPage] = useState('home');
-  
-  const [weddingData, setWeddingData] = useState({
-    // Default template data (will be replaced by user's data when loaded)
-    couple_name_1: 'Sarah',
-    couple_name_2: 'Michael',
-    wedding_date: '2025-06-15',
-    venue_name: 'Sunset Garden Estate',
-    venue_location: 'Sunset Garden Estate • Napa Valley, California',
-    their_story: 'We can\'t wait to celebrate our love story with the people who matter most to us. Join us for an unforgettable evening of joy, laughter, and new beginnings.',
-    
-    // Story section data
-    story_timeline: [
-      {
-        year: "2019",
-        title: "First Meeting",
-        description: "We met at a coffee shop in downtown San Francisco on a rainy Tuesday morning.",
-        image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=400&fit=crop"
-      }
-    ],
-    
-    // Schedule section data
-    schedule_events: [
-      {
-        time: "2:00 PM",
-        title: "Guests Arrival & Welcome",
-        description: "Please arrive by 2:00 PM for welcome drinks and mingling.",
-        location: "Sunset Garden Estate - Main Entrance",
-        duration: "30 minutes"
-      }
-    ],
-    
-    // Gallery section data
-    gallery_photos: [],
-    
-    // Wedding party data
-    bridal_party: [],
-    groom_party: [],
-    
-    // RSVP settings
-    rsvp_enabled: true,
-    
-    // Other sections
-    faqs: [],
-    registry_items: [],
-    
-    theme: 'classic'
-  });
-  
-  const [loading, setLoading] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState('classic');
   const [weddingUrl, setWeddingUrl] = useState('');
   const [copied, setCopied] = useState(false);
   const [autoSaving, setAutoSaving] = useState(false);
 
   useEffect(() => {
-    // Check authentication
-    const sessionId = localStorage.getItem('sessionId');
-    if (!sessionId) {
+    // Check authentication using centralized context
+    if (!isAuthenticated) {
       navigate('/login');
       return;
     }
     
-    loadWeddingData();
-  }, [navigate]);
+    // Generate wedding URL when wedding data is loaded
+    if (weddingData && weddingData.shareable_id) {
+      generateWeddingUrl(weddingData);
+    }
+  }, [isAuthenticated, weddingData, navigate]);
 
   const loadWeddingData = async () => {
     const sessionId = localStorage.getItem('sessionId');
