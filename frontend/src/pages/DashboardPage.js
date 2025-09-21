@@ -160,6 +160,48 @@ const DashboardPage = () => {
     }
   };
 
+  const handleLogout = () => {
+    contextLogout();
+    navigate('/');
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      // Try modern Clipboard API first
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(weddingUrl);
+      } else {
+        // Fallback method: Create temporary textarea element
+        const textArea = document.createElement('textarea');
+        textArea.value = weddingUrl;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        const result = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        if (!result) {
+          throw new Error('execCommand copy failed');
+        }
+      }
+      
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy URL:', error);
+      // Show user a manual copy option
+      const userPrompt = prompt('Copy this URL manually:', weddingUrl);
+      if (userPrompt !== null) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    }
+  };
+
   const editSections = [
     { id: 'home', label: 'Home', icon: Heart, description: 'Edit couple names, date, venue' },
     { id: 'story', label: 'Our Story', icon: Heart, description: 'Timeline and love story' },
