@@ -60,6 +60,9 @@ const DashboardPage = () => {
     isLoading: contextLoading 
   } = useUserData();
   
+  // Get theme from themes object
+  const theme = themes[currentTheme];
+  
   // Dashboard-specific state
   const [activeSection, setActiveSection] = useState('edit');
   const [activeForm, setActiveForm] = useState(null);
