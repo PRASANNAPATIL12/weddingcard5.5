@@ -1222,42 +1222,16 @@
     "id": "5fdb7961-c7a1-40a2-ae29-c34b44361ba1"
   },
   "144373fb-a519-43f6-a63a-f2c6b97933a9": {
-    "id": "144373fb-a519-43f6-a63a-f2c6b97933a9",
-    "user_id": "8404be5c-5ebe-47dc-8e25-5c8f520ed85c",
-    "couple_name_1": "Sarah",
-    "couple_name_2": "Michael",
+    "couple_name_1": "Basu",
+    "couple_name_2": "Shreya",
     "wedding_date": "2025-06-15",
-    "venue_name": "Sunset Garden Estate",
-    "venue_location": "Sunset Garden Estate \u2022 Napa Valley, California",
-    "their_story": "We can't wait to celebrate our love story with the people who matter most to us. Join us for an unforgettable evening of joy, laughter, and new beginnings.",
-    "story_timeline": [
-      {
-        "year": "2019",
-        "title": "First Meeting",
-        "description": "We met at a coffee shop in downtown San Francisco on a rainy Tuesday morning.",
-        "image": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=400&fit=crop"
-      }
-    ],
-    "schedule_events": [
-      {
-        "time": "2:00 PM",
-        "title": "Guests Arrival & Welcome",
-        "description": "Please arrive by 2:00 PM for welcome drinks and mingling.",
-        "location": "Sunset Garden Estate - Main Entrance",
-        "duration": "30 minutes",
-        "highlight": false
-      }
-    ],
-    "gallery_photos": [],
-    "bridal_party": [],
-    "groom_party": [],
-    "registry_items": [],
-    "honeymoon_fund": {},
-    "faqs": [],
-    "theme": "classic",
-    "created_at": "2025-09-21T17:34:15.963131",
-    "updated_at": "2025-09-21T17:34:15.963133",
+    "venue_name": "Beautiful Garden",
+    "venue_location": "Mumbai, India",
+    "their_story": "Our love story with Basu and Shreya",
+    "updated_at": "2025-09-21T17:34:37.633979",
+    "user_id": "8404be5c-5ebe-47dc-8e25-5c8f520ed85c",
+    "id": "144373fb-a519-43f6-a63a-f2c6b97933a9",
     "shareable_id": "ed1173aa",
-    "_id": "68d03717d0423a9003a1928a"
+    "created_at": "2025-09-21T17:34:15.963131"
   }
 }
