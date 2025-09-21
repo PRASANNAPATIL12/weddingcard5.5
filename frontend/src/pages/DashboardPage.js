@@ -238,7 +238,7 @@ const DashboardPage = () => {
     // Handle form submission and update wedding data
     let updatedData = { ...weddingData, ...formData };
     
-    setWeddingData(updatedData);
+    saveWeddingData(updatedData);
     autoSave(updatedData);
     setActiveForm(null);
   };
