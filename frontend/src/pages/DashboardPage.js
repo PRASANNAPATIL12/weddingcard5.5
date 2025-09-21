@@ -170,9 +170,7 @@ const DashboardPage = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('sessionId');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('username');
+    contextLogout();
     navigate('/');
   };
 
