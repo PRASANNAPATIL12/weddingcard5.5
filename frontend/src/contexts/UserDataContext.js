@@ -301,9 +301,9 @@ export const UserDataProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(false);
 
-  // Check authentication status on load - NO localStorage for wedding data
+  // Check authentication status on load and reload wedding data if authenticated
   useEffect(() => {
-    const checkAuth = () => {
+    const checkAuth = async () => {
       const sessionId = localStorage.getItem('sessionId');
       const userId = localStorage.getItem('userId');
       const username = localStorage.getItem('username');
@@ -311,7 +311,50 @@ export const UserDataProvider = ({ children }) => {
       if (sessionId && userId && username) {
         setIsAuthenticated(true);
         setUserInfo({ sessionId, userId, username });
-        // Wedding data will be loaded when user logs in - NO localStorage usage
+        
+        // CRITICAL FIX: Load user's wedding data from MongoDB backend on app startup
+        try {
+          let backendUrl = process.env.REACT_APP_BACKEND_URL;
+          
+          if (!backendUrl) {
+            if (window.location.origin.includes('localhost')) {
+              backendUrl = 'http://localhost:8001';
+            } else {
+              backendUrl = window.location.origin;
+            }
+          }
+          
+          console.log('Reloading user wedding data from backend on startup:', backendUrl);
+          
+          const response = await fetch(`${backendUrl}/api/wedding?session_id=${sessionId}`);
+          
+          if (response.ok) {
+            const userWeddingData = await response.json();
+            console.log('✅ Reloaded user wedding data from MongoDB on startup:', userWeddingData);
+            setWeddingData(userWeddingData);
+          } else if (response.status === 401 || response.status === 403) {
+            console.log('Session expired during startup, logging out');
+            // Session is invalid, clear localStorage and set as not authenticated
+            localStorage.removeItem('sessionId');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
+            setIsAuthenticated(false);
+            setUserInfo(null);
+            setWeddingData(defaultWeddingData);
+          } else if (response.status === 404) {
+            console.log('No existing wedding data found, user starts with default template');
+            setWeddingData(defaultWeddingData);
+          } else {
+            console.error('Error loading wedding data on startup:', response.status);
+            setWeddingData(defaultWeddingData);
+          }
+        } catch (error) {
+          console.error('❌ Error loading wedding data from MongoDB on startup:', error);
+          setWeddingData(defaultWeddingData);
+        }
+      } else {
+        // No session, show default data
+        setWeddingData(defaultWeddingData);
       }
       setIsLoading(false);
     };
