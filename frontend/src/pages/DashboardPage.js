@@ -99,61 +99,13 @@ const DashboardPage = () => {
     }
   };
 
-  // Auto-save function
-  const autoSave = async (updatedData) => {
-    setAutoSaving(true);
+  const handleFormSubmit = (sectionId, formData) => {
+    // Handle form submission and update wedding data
+    let updatedData = { ...weddingData, ...formData };
     
-    // Save to localStorage as fallback
-    localStorage.setItem('wedding_data', JSON.stringify(updatedData));
-    
-    // Save to MongoDB backend
-    const sessionId = localStorage.getItem('sessionId');
-    if (sessionId) {
-      try {
-        // Fix the backend URL determination for production
-        let backendUrl = process.env.REACT_APP_BACKEND_URL;
-        
-        // Check if we're in production environment
-        if (!backendUrl || window.location.origin.includes('emergentagent.com')) {
-          // Production environment - use relative URL
-          backendUrl = '';
-        } else if (!backendUrl && window.location.origin.includes('localhost')) {
-          backendUrl = 'http://localhost:8001';
-        }
-        
-        console.log('Auto-saving to backend URL:', backendUrl);
-        
-        const saveData = {
-          ...updatedData,
-          session_id: sessionId
-        };
-        
-        const response = await fetch(`${backendUrl}/api/wedding`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(saveData)
-        });
-        
-        if (response.ok) {
-          const savedData = await response.json();
-          console.log('Data saved to backend successfully');
-          // Update the URL with shareable data
-          if (savedData.shareable_id || savedData.id) {
-            generateWeddingUrl(savedData);
-          }
-        } else {
-          console.error('Failed to save to backend:', response.status);
-        }
-      } catch (error) {
-        console.error('Error saving to backend:', error);
-      }
-    }
-    
-    setTimeout(() => {
-      setAutoSaving(false);
-    }, 1000);
+    // Use centralized save function instead of duplicate autoSave
+    saveWeddingData(updatedData);
+    setActiveForm(null);
   };
 
   const handleDataChange = (field, value) => {
@@ -161,12 +113,9 @@ const DashboardPage = () => {
       ...weddingData,
       [field]: value
     };
-    saveWeddingData(updatedData);
     
-    // Debounced auto-save
-    setTimeout(() => {
-      autoSave(updatedData);
-    }, 1000);
+    // Use centralized save function - this will handle the MongoDB save
+    saveWeddingData(updatedData);
   };
 
   const handleLogout = () => {
@@ -231,15 +180,6 @@ const DashboardPage = () => {
     { id: 'email', label: 'Mail the Invitation', icon: Mail },
     { id: 'whatsapp', label: 'WhatsApp Invitation', icon: MessageCircle },
   ];
-
-  const handleFormSubmit = (sectionId, formData) => {
-    // Handle form submission and update wedding data
-    let updatedData = { ...weddingData, ...formData };
-    
-    saveWeddingData(updatedData);
-    autoSave(updatedData);
-    setActiveForm(null);
-  };
 
   // Mini Desktop Preview Component - Scaled down version of actual homepage
   const MiniDesktopPreview = () => {
