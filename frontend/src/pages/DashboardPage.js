@@ -87,66 +87,6 @@ const DashboardPage = () => {
     }
   }, [isAuthenticated, weddingData, navigate]);
 
-  const loadWeddingData = async () => {
-    const sessionId = localStorage.getItem('sessionId');
-    if (!sessionId) {
-      console.log('No session ID found, redirecting to login');
-      navigate('/login');
-      return;
-    }
-
-    try {
-      // Fix the backend URL determination for production
-      let backendUrl = process.env.REACT_APP_BACKEND_URL;
-      
-      // Check if we're in production environment
-      if (!backendUrl || window.location.origin.includes('emergentagent.com')) {
-        // Production environment - use relative URL
-        backendUrl = '';
-      } else if (!backendUrl && window.location.origin.includes('localhost')) {
-        backendUrl = 'http://localhost:8001';
-      }
-      
-      console.log('Loading wedding data from backend URL:', backendUrl);
-      console.log('Using session ID:', sessionId);
-      
-      const response = await fetch(`${backendUrl}/api/wedding?session_id=${sessionId}`);
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Successfully loaded wedding data:', data);
-        setWeddingData(data);
-        // Generate shareable URL using wedding data
-        generateWeddingUrl(data);
-      } else if (response.status === 404) {
-        console.log('No existing wedding data found, user will start with default template');
-        // User will have default template data to edit - this is normal for new users
-      } else if (response.status === 401 || response.status === 403) {
-        console.log('Session expired or invalid, redirecting to login');
-        localStorage.removeItem('sessionId');
-        navigate('/login');
-        return;
-      } else {
-        console.log(`Error loading wedding data: ${response.status} ${response.statusText}`);
-        // Continue with default template data
-      }
-    } catch (error) {
-      console.error('Network error loading wedding data:', error);
-      // Try to load from localStorage as fallback
-      const localData = localStorage.getItem('wedding_data');
-      if (localData) {
-        try {
-          const parsedData = JSON.parse(localData);
-          console.log('Loaded wedding data from localStorage fallback:', parsedData);
-          setWeddingData(parsedData);
-          generateWeddingUrl(parsedData);
-        } catch (parseError) {
-          console.error('Error parsing localStorage data:', parseError);
-        }
-      }
-    }
-  };
-
   const generateWeddingUrl = (weddingData) => {
     // Always prioritize shareable_id for the shareable URL
     const shareableId = weddingData?.shareable_id;
