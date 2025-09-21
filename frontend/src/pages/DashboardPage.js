@@ -161,7 +161,7 @@ const DashboardPage = () => {
       ...weddingData,
       [field]: value
     };
-    setWeddingData(updatedData);
+    saveWeddingData(updatedData);
     
     // Debounced auto-save
     setTimeout(() => {
