@@ -121,19 +121,21 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
           transformOrigin: 'center top'
         }}
       >
-        {/* Main Floating Rectangle */}
+        {/* Main Floating Rectangle - Optimized width */}
         <div 
-          className={`relative px-6 py-4 transition-all duration-700 ease-out border ${
+          className={`relative px-4 py-3 transition-all duration-700 ease-out border ${
             scrolled 
               ? 'backdrop-blur-3xl bg-white/95' 
               : 'backdrop-blur-2xl bg-white/85'
           }`}
           style={{
-            borderRadius: '20px', // Fixed consistent border radius
+            borderRadius: '16px', // Slightly smaller for compactness
             borderColor: `${theme.accent}30`,
             boxShadow: scrolled 
-              ? `0 12px 32px ${theme.primary}15, 0 4px 16px ${theme.accent}12` 
-              : `0 8px 24px ${theme.primary}12, 0 3px 12px ${theme.accent}10`,
+              ? `0 8px 24px ${theme.primary}12, 0 3px 12px ${theme.accent}10` 
+              : `0 6px 20px ${theme.primary}10, 0 2px 10px ${theme.accent}08`,
+            maxWidth: isMobile ? 'none' : 'calc(100vw - 40px)', // Ensure it never exceeds viewport
+            width: isMobile ? '100%' : 'auto'
           }}
         >
           {/* Subtle gradient overlay */}
