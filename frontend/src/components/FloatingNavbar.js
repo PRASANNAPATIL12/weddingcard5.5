@@ -148,12 +148,12 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
           />
 
           <div className="relative flex items-center">
-            {/* Left Side: Couple Names with Heart */}
-            <div className="flex items-center gap-3 flex-shrink-0">
+            {/* Left Side: Couple Names with Heart - Optimized */}
+            <div className="flex items-center gap-2 flex-shrink-0">
               <div className="relative">
                 <Heart 
-                  className={`w-6 h-6 transition-all duration-500 ${
-                    scrolled ? 'scale-90' : 'scale-100'
+                  className={`transition-all duration-500 ${
+                    scrolled ? 'w-4 h-4' : 'w-5 h-5'
                   }`}
                   style={{ color: theme.accent }} 
                 />
@@ -162,12 +162,12 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
               <div className="flex-shrink-0">
                 <h1 
                   className={`font-bold leading-tight transition-all duration-500 whitespace-nowrap ${
-                    scrolled ? 'text-base' : 'text-lg'
+                    scrolled ? 'text-sm' : 'text-base'
                   }`}
                   style={{ 
                     fontFamily: theme.fontPrimary,
                     color: theme.primary,
-                    textShadow: `0 1px 3px ${theme.primary}15`
+                    textShadow: `0 1px 2px ${theme.primary}15`
                   }}
                 >
                   {weddingData?.couple_name_1} & {weddingData?.couple_name_2}
