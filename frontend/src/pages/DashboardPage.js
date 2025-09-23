@@ -949,6 +949,7 @@ const OurStoryFormContent = ({ initialData, theme, onSave }) => {
   };
 
   const handleSave = () => {
+    // Update both timeline and enabled status
     onSave('story_timeline', storyTimeline);
     onSave('story_enabled', storyEnabled);
     setHasChanges(false);
