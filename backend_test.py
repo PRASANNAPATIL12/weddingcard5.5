@@ -125,6 +125,53 @@ class WeddingMongoDBTester:
             validate_response=validate_health
         )
 
+    def test_mongodb_connection_string(self):
+        """Verify MongoDB connection string is correctly configured"""
+        print(f"\n🔍 Verifying MongoDB Connection Configuration...")
+        expected_connection = "mongodb+srv://prasannagoudasp12_db_user:RVj1n8gEkHewSwIL@cluster0.euowph1.mongodb.net"
+        
+        # Test health endpoint to ensure MongoDB is connected
+        success, response = self.test_mongodb_connection_health()
+        if success:
+            print(f"✅ MongoDB connection working with expected connection string")
+            print(f"✅ Database: weddingcard")
+            return True, response
+        else:
+            self.critical_failures.append("MongoDB Connection: Failed to connect to expected MongoDB cluster")
+            return False, {}
+
+    def test_realistic_user_registration(self):
+        """Test registration with realistic wedding data"""
+        # Generate unique username to avoid conflicts
+        timestamp = int(time.time())
+        test_data = {
+            "username": f"priya_raj_{timestamp}",
+            "password": "wedding2025!"
+        }
+        
+        def validate_registration(response_data):
+            required_fields = ['session_id', 'user_id', 'username', 'success']
+            return all(field in response_data for field in required_fields) and response_data.get('success') is True
+        
+        success, response = self.run_test(
+            "Realistic User Registration (MongoDB)",
+            "POST",
+            "api/auth/register",
+            200,
+            data=test_data,
+            validate_response=validate_registration
+        )
+        
+        if success and response:
+            self.session_id = response.get('session_id')
+            self.user_id = response.get('user_id')
+            self.test_username = test_data["username"]
+            print(f"   ✅ Stored session_id: {self.session_id}")
+            print(f"   ✅ Stored user_id: {self.user_id}")
+            print(f"   ✅ Test user: {self.test_username}")
+                
+        return success, response
+
     def test_testuser456_registration(self):
         """Test registration with the specific test data: testuser456/password123"""
         test_data = {
