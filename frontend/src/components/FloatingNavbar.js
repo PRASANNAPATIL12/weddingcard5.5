@@ -311,15 +311,15 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
         </div>
       </nav>
 
-      {/* Premium Mobile Menu Overlay */}
+      {/* Premium Mobile Menu Overlay - Only for Mobile */}
       {mobileMenuOpen && (
         <div 
           ref={overlayRef}
-          className={`fixed inset-0 z-[9999] transition-all duration-500 ${
+          className={`fixed inset-0 z-[9999] lg:hidden transition-all duration-500 ${
             mobileMenuOpen ? 'opacity-100' : 'opacity-0'
           }`}
           style={{ 
-            background: 'rgba(0, 0, 0, 0.20)',
+            background: 'rgba(0, 0, 0, 0.25)',
             backdropFilter: 'blur(12px)',
             WebkitBackdropFilter: 'blur(12px)'
           }}
@@ -343,7 +343,7 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
             ))}
           </div>
 
-          {/* Premium Dropdown Menu */}
+          {/* Premium Dropdown Menu - Properly positioned and scrollable */}
           <div 
             ref={menuRef}
             className={`absolute top-20 left-1/2 transform -translate-x-1/2 w-80 max-w-[90vw] transition-all duration-700 ease-out ${
@@ -352,110 +352,120 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
                 : '-translate-y-10 opacity-0 scale-95'
             }`}
             style={{
-              transformOrigin: 'top center'
+              transformOrigin: 'top center',
+              maxHeight: 'calc(100vh - 100px)', // Ensure it fits in viewport
             }}
           >
             <div 
-              className="rounded-3xl p-8 border"
+              className="rounded-3xl border overflow-hidden"
               style={{
-                background: `linear-gradient(135deg, ${theme.background}95, ${theme.secondary}85)`,
+                background: `linear-gradient(135deg, ${theme.background}96, ${theme.secondary}88)`,
                 backdropFilter: 'blur(30px)',
                 WebkitBackdropFilter: 'blur(30px)',
-                borderColor: `${theme.accent}20`,
-                boxShadow: `0 30px 60px ${theme.primary}15, 0 12px 24px ${theme.accent}10`
+                borderColor: `${theme.accent}25`,
+                boxShadow: `0 25px 50px ${theme.primary}20, 0 10px 20px ${theme.accent}15`,
+                borderRadius: '24px' // Fixed consistent border radius
               }}
             >
               {/* Menu Header */}
-              <div className="text-center mb-8">
-                <div className="flex justify-center items-center gap-3 mb-3">
-                  <Heart className="w-8 h-8" style={{ color: theme.accent }} />
+              <div className="p-6 border-b border-opacity-10" style={{ borderColor: theme.accent }}>
+                <div className="text-center">
+                  <div className="flex justify-center items-center gap-3 mb-3">
+                    <Heart className="w-8 h-8" style={{ color: theme.accent }} />
+                  </div>
+                  <h2 
+                    className="text-xl font-bold mb-1"
+                    style={{ 
+                      fontFamily: theme.fontPrimary,
+                      color: theme.primary 
+                    }}
+                  >
+                    {weddingData?.couple_name_1} & {weddingData?.couple_name_2}
+                  </h2>
+                  <p className="text-sm opacity-70" style={{ color: theme.textLight }}>
+                    Wedding Navigation
+                  </p>
                 </div>
-                <h2 
-                  className="text-xl font-bold mb-1"
-                  style={{ 
-                    fontFamily: theme.fontPrimary,
-                    color: theme.primary 
-                  }}
-                >
-                  {weddingData?.couple_name_1} & {weddingData?.couple_name_2}
-                </h2>
-                <p className="text-sm opacity-70" style={{ color: theme.textLight }}>
-                  Wedding Navigation
-                </p>
               </div>
 
-              {/* Navigation Items */}
-              <div className="space-y-2">
-                {navItems.map((item, index) => {
-                  const Icon = item.icon;
-                  const isActive = isPublicPage 
-                    ? (activeSection === item.path) 
-                    : (location.pathname === item.path || 
-                       (item.path.startsWith('#') && location.hash === item.path));
-                  
-                  const itemElement = isPublicPage ? (
-                    <button
-                      key={item.path}
-                      onClick={() => {
-                        setActiveSection(item.path);
-                        handleMobileNavClick(item.path);
-                      }}
-                      className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-500 group relative overflow-hidden ${
-                        isActive ? 'scale-105' : 'hover:scale-102'
-                      }`}
-                      style={{ 
-                        background: isActive 
-                          ? `linear-gradient(135deg, ${theme.accent}20, ${theme.accent}10)` 
-                          : 'transparent',
-                        animationDelay: `${index * 80}ms`,
-                        color: isActive ? theme.accent : theme.text,
-                        transform: mobileMenuOpen ? 'translateY(0)' : 'translateY(20px)',
-                        opacity: mobileMenuOpen ? 1 : 0,
-                        animation: mobileMenuOpen ? `slideInUp 0.6s ease-out ${index * 80}ms forwards` : 'none'
-                      }}
-                    >
-                      <AnimatedMenuItem 
-                        Icon={Icon}
-                        label={item.label}
-                        isActive={isActive}
-                        theme={theme}
-                      />
-                    </button>
-                  ) : (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      onClick={() => handleMobileNavClick(item.path)}
-                      className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-500 group relative overflow-hidden ${
-                        isActive ? 'scale-105' : 'hover:scale-102'
-                      }`}
-                      style={{ 
-                        background: isActive 
-                          ? `linear-gradient(135deg, ${theme.accent}20, ${theme.accent}10)` 
-                          : 'transparent',
-                        animationDelay: `${index * 80}ms`,
-                        color: isActive ? theme.accent : theme.text,
-                        transform: mobileMenuOpen ? 'translateY(0)' : 'translateY(20px)',
-                        opacity: mobileMenuOpen ? 1 : 0,
-                        animation: mobileMenuOpen ? `slideInUp 0.6s ease-out ${index * 80}ms forwards` : 'none'
-                      }}
-                    >
-                      <AnimatedMenuItem 
-                        Icon={Icon}
-                        label={item.label}
-                        isActive={isActive}
-                        theme={theme}
-                      />
-                    </Link>
-                  );
+              {/* Scrollable Navigation Items Container */}
+              <div 
+                className="overflow-y-auto custom-scrollbar"
+                style={{ 
+                  maxHeight: 'calc(100vh - 300px)' // Leave space for header and theme selector
+                }}
+              >
+                <div className="p-4 space-y-2">
+                  {navItems.map((item, index) => {
+                    const Icon = item.icon;
+                    const isActive = isPublicPage 
+                      ? (activeSection === item.path) 
+                      : (location.pathname === item.path);
+                    
+                    const itemElement = isPublicPage ? (
+                      <button
+                        key={item.path}
+                        onClick={() => {
+                          setActiveSection(item.path);
+                          handleMobileNavClick(item.path);
+                        }}
+                        className={`w-full flex items-center gap-4 p-4 rounded-2xl transition-all duration-500 group relative overflow-hidden ${
+                          isActive ? 'scale-105' : 'hover:scale-102'
+                        }`}
+                        style={{ 
+                          background: isActive 
+                            ? `linear-gradient(135deg, ${theme.accent}20, ${theme.accent}10)` 
+                            : 'transparent',
+                          animationDelay: `${index * 80}ms`,
+                          color: isActive ? theme.accent : theme.text,
+                          transform: mobileMenuOpen ? 'translateY(0)' : 'translateY(20px)',
+                          opacity: mobileMenuOpen ? 1 : 0,
+                          animation: mobileMenuOpen ? `slideInUp 0.6s ease-out ${index * 80}ms forwards` : 'none'
+                        }}
+                      >
+                        <AnimatedMenuItem 
+                          Icon={Icon}
+                          label={item.label}
+                          isActive={isActive}
+                          theme={theme}
+                        />
+                      </button>
+                    ) : (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => handleMobileNavClick(item.path)}
+                        className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-500 group relative overflow-hidden ${
+                          isActive ? 'scale-105' : 'hover:scale-102'
+                        }`}
+                        style={{ 
+                          background: isActive 
+                            ? `linear-gradient(135deg, ${theme.accent}20, ${theme.accent}10)` 
+                            : 'transparent',
+                          animationDelay: `${index * 80}ms`,
+                          color: isActive ? theme.accent : theme.text,
+                          transform: mobileMenuOpen ? 'translateY(0)' : 'translateY(20px)',
+                          opacity: mobileMenuOpen ? 1 : 0,
+                          animation: mobileMenuOpen ? `slideInUp 0.6s ease-out ${index * 80}ms forwards` : 'none'
+                        }}
+                      >
+                        <AnimatedMenuItem 
+                          Icon={Icon}
+                          label={item.label}
+                          isActive={isActive}
+                          theme={theme}
+                        />
+                      </Link>
+                    );
 
-                  return itemElement;
-                })}
+                    return itemElement;
+                  })}
+                </div>
               </div>
 
-              {/* Theme Selector */}
+              {/* Theme Selector - Fixed at bottom */}
               {!isPublicPage && (
-                <div className="mt-8 pt-6 border-t border-opacity-20" style={{ borderColor: theme.accent }}>
+                <div className="p-6 border-t border-opacity-10" style={{ borderColor: theme.accent }}>
                   <label className="text-sm font-medium opacity-70 mb-3 block" style={{ color: theme.text }}>
                     Theme
                   </label>
@@ -466,7 +476,8 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
                     style={{ 
                       color: theme.text,
                       border: `1px solid ${theme.accent}20`,
-                      focusRing: `${theme.accent}40`
+                      focusRing: `${theme.accent}40`,
+                      borderRadius: '16px' // Fixed consistent border radius
                     }}
                   >
                     <option value="classic">🎭 Classic Elegance</option>
