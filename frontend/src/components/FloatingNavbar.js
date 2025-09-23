@@ -117,7 +117,7 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
             : 'scale-100'
         }`}
         style={{
-          width: window.innerWidth >= 1024 ? 'auto' : 'min(90vw, 400px)',
+          width: isMobile ? 'min(90vw, 400px)' : 'auto',
           transformOrigin: 'center top'
         }}
       >
