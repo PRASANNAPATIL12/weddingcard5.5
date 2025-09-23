@@ -99,39 +99,41 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
       <nav 
         className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-700 ease-out ${
           scrolled 
-            ? 'scale-95 shadow-2xl' 
-            : 'scale-100 shadow-xl'
+            ? 'scale-95' 
+            : 'scale-100'
         }`}
         style={{
-          width: 'min(90vw, 400px)',
+          width: window.innerWidth >= 1024 ? 'auto' : 'min(90vw, 400px)',
           transformOrigin: 'center top'
         }}
       >
         {/* Main Floating Rectangle */}
         <div 
-          className={`relative rounded-2xl px-6 py-4 transition-all duration-700 ease-out border ${
+          className={`relative px-6 py-4 transition-all duration-700 ease-out border ${
             scrolled 
-              ? 'backdrop-blur-3xl bg-white/90' 
-              : 'backdrop-blur-2xl bg-white/80'
+              ? 'backdrop-blur-3xl bg-white/95' 
+              : 'backdrop-blur-2xl bg-white/85'
           }`}
           style={{
+            borderRadius: '20px', // Fixed consistent border radius
             borderColor: `${theme.accent}30`,
             boxShadow: scrolled 
-              ? `0 20px 40px ${theme.accent}20, 0 8px 16px ${theme.primary}10` 
-              : `0 10px 30px ${theme.accent}15, 0 4px 12px ${theme.primary}08`,
+              ? `0 12px 32px ${theme.primary}15, 0 4px 16px ${theme.accent}12` 
+              : `0 8px 24px ${theme.primary}12, 0 3px 12px ${theme.accent}10`,
           }}
         >
           {/* Subtle gradient overlay */}
           <div 
-            className="absolute inset-0 rounded-2xl opacity-30 pointer-events-none"
+            className="absolute inset-0 opacity-20 pointer-events-none"
             style={{
-              background: `linear-gradient(135deg, ${theme.accent}05 0%, ${theme.primary}03 100%)`
+              borderRadius: '20px', // Match parent border radius
+              background: `linear-gradient(135deg, ${theme.accent}08 0%, ${theme.primary}04 100%)`
             }}
           />
 
-          <div className="relative flex justify-between items-center">
+          <div className="relative flex items-center">
             {/* Left Side: Couple Names with Heart */}
-            <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="flex items-center gap-3 flex-shrink-0">
               <div className="relative">
                 <Heart 
                   className={`w-6 h-6 transition-all duration-500 ${
@@ -139,23 +141,17 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
                   }`}
                   style={{ color: theme.accent }} 
                 />
-                <div 
-                  className="absolute -inset-1 rounded-full opacity-0 animate-pulse"
-                  style={{ 
-                    background: `radial-gradient(circle, ${theme.accent}30 0%, transparent 70%)`
-                  }}
-                />
               </div>
               
-              <div className="flex-1 min-w-0">
+              <div className="flex-shrink-0">
                 <h1 
-                  className={`font-bold text-lg leading-tight transition-all duration-500 truncate ${
+                  className={`font-bold leading-tight transition-all duration-500 whitespace-nowrap ${
                     scrolled ? 'text-base' : 'text-lg'
                   }`}
                   style={{ 
                     fontFamily: theme.fontPrimary,
                     color: theme.primary,
-                    textShadow: `0 2px 4px ${theme.primary}10`
+                    textShadow: `0 1px 3px ${theme.primary}15`
                   }}
                 >
                   {weddingData?.couple_name_1} & {weddingData?.couple_name_2}
@@ -163,52 +159,154 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
               </div>
             </div>
 
-            {/* Right Side: Hamburger Menu */}
-            <button
-              onClick={() => mobileMenuOpen ? closeMobileMenu() : openMobileMenu()}
-              className="relative p-2 rounded-xl transition-all duration-500 hover:scale-110 focus:outline-none group ml-3"
-              style={{ 
-                backgroundColor: mobileMenuOpen ? `${theme.accent}20` : 'transparent'
-              }}
-              aria-label="Toggle mobile menu"
-            >
-              {/* Premium Hamburger Animation */}
-              <div className="relative w-6 h-6">
-                {/* Top bar */}
-                <div 
-                  className={`absolute top-1 left-0 w-6 h-0.5 rounded-full transition-all duration-500 ease-out ${
-                    mobileMenuOpen ? 'rotate-45 translate-y-2' : 'rotate-0 translate-y-0'
-                  }`}
-                  style={{ 
-                    backgroundColor: theme.primary,
-                    transformOrigin: 'center'
-                  }}
-                />
-                {/* Middle bar */}
-                <div 
-                  className={`absolute top-2.5 left-0 w-6 h-0.5 rounded-full transition-all duration-300 ease-out ${
-                    mobileMenuOpen ? 'opacity-0 scale-0' : 'opacity-100 scale-100'
-                  }`}
-                  style={{ backgroundColor: theme.primary }}
-                />
-                {/* Bottom bar */}
-                <div 
-                  className={`absolute top-4 left-0 w-6 h-0.5 rounded-full transition-all duration-500 ease-out ${
-                    mobileMenuOpen ? '-rotate-45 -translate-y-2' : 'rotate-0 translate-y-0'
-                  }`}
-                  style={{ 
-                    backgroundColor: theme.primary,
-                    transformOrigin: 'center'
-                  }}
-                />
-              </div>
+            {/* Desktop Navigation Items (hidden on mobile) */}
+            <div className="hidden lg:flex items-center ml-8 gap-6">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = isPublicPage 
+                  ? (activeSection === item.path) 
+                  : (location.pathname === item.path);
 
-              {/* Hover effect */}
-              <div 
-                className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{ background: `${theme.accent}15` }}
-              />
-            </button>
+                const NavigationItem = isPublicPage ? 'button' : Link;
+                const itemProps = isPublicPage 
+                  ? { 
+                      onClick: () => setActiveSection(item.path)
+                    }
+                  : { 
+                      to: item.path 
+                    };
+
+                return (
+                  <NavigationItem
+                    key={item.path}
+                    {...itemProps}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-500 group relative overflow-hidden ${
+                      isActive ? 'scale-105' : 'hover:scale-102'
+                    }`}
+                    style={{
+                      background: isActive 
+                        ? `linear-gradient(135deg, ${theme.accent}25, ${theme.accent}15)` 
+                        : 'transparent',
+                      color: isActive ? theme.primary : theme.textLight,
+                      border: isActive ? `1px solid ${theme.accent}30` : '1px solid transparent'
+                    }}
+                  >
+                    {/* Active indicator */}
+                    {isActive && (
+                      <div 
+                        className="absolute inset-0 rounded-xl animate-pulse"
+                        style={{ 
+                          background: `linear-gradient(135deg, ${theme.accent}10, ${theme.accent}05)`,
+                          animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                        }}
+                      />
+                    )}
+                    
+                    {/* Hover effect */}
+                    <div 
+                      className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      style={{ background: `${theme.accent}08` }}
+                    />
+                    
+                    <Icon 
+                      className={`w-4 h-4 relative z-10 transition-all duration-300 ${
+                        isActive ? 'scale-110' : 'group-hover:scale-105'
+                      }`}
+                    />
+                    <span 
+                      className={`text-sm font-medium relative z-10 transition-all duration-300 whitespace-nowrap ${
+                        scrolled ? 'text-xs' : 'text-sm'
+                      }`}
+                      style={{ fontFamily: theme.fontSecondary }}
+                    >
+                      {item.label}
+                    </span>
+
+                    {/* Premium active glow effect */}
+                    {isActive && (
+                      <div 
+                        className="absolute -inset-0.5 rounded-xl opacity-30 -z-10"
+                        style={{ 
+                          background: `linear-gradient(45deg, ${theme.accent}, transparent, ${theme.accent})`,
+                          filter: 'blur(2px)'
+                        }}
+                      />
+                    )}
+                  </NavigationItem>
+                );
+              })}
+
+              {/* Theme Selector for Desktop */}
+              {!isPublicPage && (
+                <div className="flex items-center ml-4 pl-4 border-l border-opacity-20" style={{ borderColor: theme.accent }}>
+                  <select
+                    value={currentTheme}
+                    onChange={(e) => setCurrentTheme(e.target.value)}
+                    className={`bg-transparent rounded-lg px-3 py-1 text-xs cursor-pointer transition-all duration-300 focus:outline-none focus:ring-1 ${
+                      scrolled ? 'text-xs' : 'text-sm'
+                    }`}
+                    style={{ 
+                      color: theme.textLight,
+                      border: `1px solid ${theme.accent}20`,
+                      focusRing: `${theme.accent}40`
+                    }}
+                  >
+                    <option value="classic">Classic</option>
+                    <option value="modern">Modern</option>
+                    <option value="boho">Boho</option>
+                  </select>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Hamburger Menu (only visible on mobile) */}
+            <div className="lg:hidden ml-6">
+              <button
+                onClick={() => mobileMenuOpen ? closeMobileMenu() : openMobileMenu()}
+                className="relative p-2 rounded-xl transition-all duration-500 hover:scale-110 focus:outline-none group"
+                style={{ 
+                  backgroundColor: mobileMenuOpen ? `${theme.accent}20` : 'transparent'
+                }}
+                aria-label="Toggle mobile menu"
+              >
+                {/* Premium Hamburger Animation */}
+                <div className="relative w-6 h-6">
+                  {/* Top bar */}
+                  <div 
+                    className={`absolute top-1 left-0 w-6 h-0.5 rounded-full transition-all duration-500 ease-out ${
+                      mobileMenuOpen ? 'rotate-45 translate-y-2' : 'rotate-0 translate-y-0'
+                    }`}
+                    style={{ 
+                      backgroundColor: theme.primary,
+                      transformOrigin: 'center'
+                    }}
+                  />
+                  {/* Middle bar */}
+                  <div 
+                    className={`absolute top-2.5 left-0 w-6 h-0.5 rounded-full transition-all duration-300 ease-out ${
+                      mobileMenuOpen ? 'opacity-0 scale-0' : 'opacity-100 scale-100'
+                    }`}
+                    style={{ backgroundColor: theme.primary }}
+                  />
+                  {/* Bottom bar */}
+                  <div 
+                    className={`absolute top-4 left-0 w-6 h-0.5 rounded-full transition-all duration-500 ease-out ${
+                      mobileMenuOpen ? '-rotate-45 -translate-y-2' : 'rotate-0 translate-y-0'
+                    }`}
+                    style={{ 
+                      backgroundColor: theme.primary,
+                      transformOrigin: 'center'
+                    }}
+                  />
+                </div>
+
+                {/* Hover effect */}
+                <div 
+                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{ background: `${theme.accent}15` }}
+                />
+              </button>
+            </div>
           </div>
         </div>
       </nav>
