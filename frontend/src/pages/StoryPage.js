@@ -11,6 +11,37 @@ const StoryPage = () => {
   // Use dynamic timeline from wedding data, fallback to default if not available
   const timeline = weddingData.story_timeline || [];
 
+  // If timeline is empty or story is disabled, show a message
+  if (!timeline.length || weddingData.story_enabled === false) {
+    return (
+      <div 
+        className="min-h-screen pt-20 pb-16 px-8 flex items-center justify-center"
+        style={{ background: theme.gradientPrimary }}
+      >
+        <div className="text-center">
+          <h1 
+            className="text-6xl font-light mb-6"
+            style={{ 
+              fontFamily: theme.fontPrimary,
+              color: theme.primary 
+            }}
+          >
+            Our Love Story
+          </h1>
+          <p 
+            className="text-xl leading-relaxed max-w-3xl mx-auto"
+            style={{ color: theme.textLight }}
+          >
+            {weddingData.story_enabled === false 
+              ? "This section is currently disabled."
+              : "No story timeline has been created yet. Please check back soon!"
+            }
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div 
       className="min-h-screen pt-20 pb-16 px-8"
