@@ -208,6 +208,8 @@ const PublicWeddingPage = () => {
     <FloatingNavbar 
       weddingData={weddingData} 
       isPublicPage={true}
+      activeSection={activeSection}
+      setActiveSection={setActiveSection}
     />
   );
 
