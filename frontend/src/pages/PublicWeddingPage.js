@@ -203,104 +203,12 @@ const PublicWeddingPage = () => {
     );
   }
 
-  // Navigation component
+  // Navigation component - using FloatingNavbar
   const Navigation = () => (
-    <nav 
-      className="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b"
-      style={{ 
-        backgroundColor: `${theme.background}95`,
-        borderColor: `${theme.accent}20`
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <Heart className="w-8 h-8" style={{ color: theme.accent }} />
-            <span 
-              className="text-xl font-semibold"
-              style={{ 
-                color: theme.primary,
-                fontFamily: theme.fontPrimary 
-              }}
-            >
-              {weddingData?.couple_name_1} & {weddingData?.couple_name_2}
-            </span>
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActiveSection(item.id)}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 ${
-                  activeSection === item.id 
-                    ? 'bg-opacity-20' 
-                    : 'hover:bg-opacity-10'
-                }`}
-                style={{
-                  backgroundColor: activeSection === item.id ? theme.accent : 'transparent',
-                  color: activeSection === item.id ? theme.primary : theme.textLight
-                }}
-              >
-                <item.icon className="w-4 h-4" />
-                <span className="text-sm font-medium">{item.label}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="lg:hidden">
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg hover:bg-opacity-10"
-              style={{ 
-                color: theme.primary,
-                backgroundColor: mobileMenuOpen ? `${theme.accent}20` : 'transparent'
-              }}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div 
-          className="lg:hidden absolute top-full left-0 right-0 backdrop-blur-xl border-b"
-          style={{ 
-            backgroundColor: `${theme.background}98`,
-            borderColor: `${theme.accent}20`
-          }}
-        >
-          <div className="px-4 py-4 space-y-2">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveSection(item.id);
-                  setMobileMenuOpen(false);
-                }}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                  activeSection === item.id 
-                    ? 'bg-opacity-20' 
-                    : 'hover:bg-opacity-10'
-                }`}
-                style={{
-                  backgroundColor: activeSection === item.id ? theme.accent : 'transparent',
-                  color: activeSection === item.id ? theme.primary : theme.textLight
-                }}
-              >
-                <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-    </nav>
+    <FloatingNavbar 
+      weddingData={weddingData} 
+      isPublicPage={true}
+    />
   );
 
   // Home Section Component
