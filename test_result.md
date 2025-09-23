@@ -255,6 +255,9 @@ test_plan:
     - "Shareable link personalization"
     - "User registration flow"
     - "React static file serving"
+    - "Our Story Backend API Testing"
+    - "MongoDB Integration with Our Story"
+    - "Authentication and Session Management"
 
 agent_communication:
   - agent: "main"
