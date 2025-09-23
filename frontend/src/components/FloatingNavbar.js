@@ -72,15 +72,15 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
 
   // Navigation items based on page type
   const navItems = isPublicPage ? [
-    { path: '#home', label: 'Home', icon: Home },
-    { path: '#story', label: 'Our Story', icon: BookOpen },
-    { path: '#rsvp', label: 'RSVP', icon: Sparkles },
-    { path: '#schedule', label: 'Schedule', icon: Calendar },
-    { path: '#gallery', label: 'Gallery', icon: Camera },
-    { path: '#party', label: 'Wedding Party', icon: Users },
-    { path: '#registry', label: 'Registry', icon: Gift },
-    { path: '#guestbook', label: 'Guestbook', icon: MessageCircle },
-    { path: '#faq', label: 'FAQ', icon: HelpCircle }
+    { path: 'home', label: 'Home', icon: Home },
+    { path: 'story', label: 'Our Story', icon: BookOpen },
+    { path: 'rsvp', label: 'RSVP', icon: Sparkles },
+    { path: 'schedule', label: 'Schedule', icon: Calendar },
+    { path: 'gallery', label: 'Gallery', icon: Camera },
+    { path: 'party', label: 'Wedding Party', icon: Users },
+    { path: 'registry', label: 'Registry', icon: Gift },
+    { path: 'guestbook', label: 'Guestbook', icon: MessageCircle },
+    { path: 'faq', label: 'FAQ', icon: HelpCircle }
   ] : [
     { path: '/', label: 'Home', icon: Heart },
     { path: '/story', label: 'Our Story', icon: Sparkles },
