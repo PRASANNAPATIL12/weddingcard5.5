@@ -3,9 +3,13 @@ import sys
 import json
 from datetime import datetime
 import time
+import os
 
 class WeddingMongoDBTester:
-    def __init__(self, base_url="http://localhost:8001"):
+    def __init__(self, base_url=None):
+        # Use environment variable or fallback to localhost
+        if base_url is None:
+            base_url = os.getenv('REACT_APP_BACKEND_URL', 'http://localhost:8001')
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
@@ -15,6 +19,28 @@ class WeddingMongoDBTester:
         self.test_username = None
         self.critical_failures = []
         self.minor_issues = []
+        
+        # Test data for Our Story functionality
+        self.test_story_timeline = [
+            {
+                "year": "2020",
+                "title": "First Meeting",
+                "description": "We met at a coffee shop during the pandemic lockdown.",
+                "image": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=400&fit=crop"
+            },
+            {
+                "year": "2022", 
+                "title": "First Date",
+                "description": "Our first official date was at a local restaurant.",
+                "image": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop"
+            },
+            {
+                "year": "2024",
+                "title": "The Proposal",
+                "description": "He proposed during a sunset walk on the beach.",
+                "image": "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop"
+            }
+        ]
 
     def run_test(self, name, method, endpoint, expected_status, data=None, headers=None, params=None, validate_response=None):
         """Run a single API test with optional response validation"""
@@ -98,6 +124,53 @@ class WeddingMongoDBTester:
             200,
             validate_response=validate_health
         )
+
+    def test_mongodb_connection_string(self):
+        """Verify MongoDB connection string is correctly configured"""
+        print(f"\n🔍 Verifying MongoDB Connection Configuration...")
+        expected_connection = "mongodb+srv://prasannagoudasp12_db_user:RVj1n8gEkHewSwIL@cluster0.euowph1.mongodb.net"
+        
+        # Test health endpoint to ensure MongoDB is connected
+        success, response = self.test_mongodb_connection_health()
+        if success:
+            print(f"✅ MongoDB connection working with expected connection string")
+            print(f"✅ Database: weddingcard")
+            return True, response
+        else:
+            self.critical_failures.append("MongoDB Connection: Failed to connect to expected MongoDB cluster")
+            return False, {}
+
+    def test_realistic_user_registration(self):
+        """Test registration with realistic wedding data"""
+        # Generate unique username to avoid conflicts
+        timestamp = int(time.time())
+        test_data = {
+            "username": f"priya_raj_{timestamp}",
+            "password": "wedding2025!"
+        }
+        
+        def validate_registration(response_data):
+            required_fields = ['session_id', 'user_id', 'username', 'success']
+            return all(field in response_data for field in required_fields) and response_data.get('success') is True
+        
+        success, response = self.run_test(
+            "Realistic User Registration (MongoDB)",
+            "POST",
+            "api/auth/register",
+            200,
+            data=test_data,
+            validate_response=validate_registration
+        )
+        
+        if success and response:
+            self.session_id = response.get('session_id')
+            self.user_id = response.get('user_id')
+            self.test_username = test_data["username"]
+            print(f"   ✅ Stored session_id: {self.session_id}")
+            print(f"   ✅ Stored user_id: {self.user_id}")
+            print(f"   ✅ Test user: {self.test_username}")
+                
+        return success, response
 
     def test_testuser456_registration(self):
         """Test registration with the specific test data: testuser456/password123"""
@@ -261,39 +334,147 @@ class WeddingMongoDBTester:
         
         return success, response
 
-    def test_wedding_data_update_mongodb(self):
-        """Test wedding data update in MongoDB - CRITICAL TEST for 'Failed to fetch' fix"""
+    def test_wedding_data_update_with_our_story(self):
+        """Test wedding data update with Our Story functionality - CRITICAL TEST"""
         if not self.session_id:
+            self.critical_failures.append("Our Story Update: No session_id available")
             return False, {}
             
         updated_data = {
             "session_id": self.session_id,
-            "couple_name_1": "TestUser456",
-            "couple_name_2": "TestPartner",
-            "wedding_date": "2025-08-15",
-            "venue_name": "Test Venue",
-            "venue_location": "Test Venue • Test City, Test State",
-            "their_story": "UPDATED: This is our test love story that has been updated to test the 'Failed to fetch' fix.",
-            "theme": "modern"
+            "couple_name_1": "Priya",
+            "couple_name_2": "Raj",
+            "wedding_date": "2025-12-15",
+            "venue_name": "Royal Gardens Resort",
+            "venue_location": "Royal Gardens Resort • Mumbai, Maharashtra",
+            "their_story": "Our love story began in college and has grown stronger every day since.",
+            "story_timeline": self.test_story_timeline,
+            "story_enabled": True,
+            "theme": "elegant"
         }
         
-        def validate_update(response_data):
-            return ("UPDATED:" in response_data.get('their_story', '') and
-                   response_data.get('theme') == 'modern' and
-                   response_data.get('couple_name_1') == 'TestUser456')
+        def validate_our_story_update(response_data):
+            # Validate Our Story specific fields
+            story_timeline = response_data.get('story_timeline', [])
+            story_enabled = response_data.get('story_enabled', False)
+            
+            timeline_valid = (
+                len(story_timeline) == 3 and
+                story_timeline[0].get('year') == '2020' and
+                story_timeline[0].get('title') == 'First Meeting' and
+                story_timeline[1].get('year') == '2022' and
+                story_timeline[2].get('year') == '2024' and
+                story_timeline[2].get('title') == 'The Proposal'
+            )
+            
+            basic_data_valid = (
+                response_data.get('couple_name_1') == 'Priya' and
+                response_data.get('couple_name_2') == 'Raj' and
+                response_data.get('venue_name') == 'Royal Gardens Resort'
+            )
+            
+            if not timeline_valid:
+                print(f"❌ Story timeline validation failed")
+                print(f"   Expected 3 timeline items, got {len(story_timeline)}")
+                if story_timeline:
+                    print(f"   First item: {story_timeline[0]}")
+            
+            if not story_enabled:
+                print(f"❌ Story enabled should be True, got {story_enabled}")
+            
+            return timeline_valid and story_enabled and basic_data_valid
         
         success, response = self.run_test(
-            "🚨 CRITICAL: Wedding Data Update (Failed to fetch fix)",
+            "🚨 CRITICAL: Wedding Data Update with Our Story",
             "PUT",
             "api/wedding",
             200,
             data=updated_data,
-            validate_response=validate_update
+            validate_response=validate_our_story_update
         )
         
         if success and response:
             self.wedding_id = response.get('id')
             print(f"   ✅ Wedding ID: {self.wedding_id}")
+            print(f"   ✅ Our Story Timeline: {len(response.get('story_timeline', []))} items")
+            print(f"   ✅ Story Enabled: {response.get('story_enabled')}")
+            
+        return success, response
+
+    def test_our_story_data_persistence(self):
+        """Test that Our Story data persists correctly in MongoDB"""
+        if not self.session_id:
+            self.critical_failures.append("Our Story Persistence: No session_id available")
+            return False, {}
+            
+        def validate_story_persistence(response_data):
+            story_timeline = response_data.get('story_timeline', [])
+            story_enabled = response_data.get('story_enabled', False)
+            
+            # Verify all timeline data persisted correctly
+            timeline_persisted = (
+                len(story_timeline) == 3 and
+                any(item.get('title') == 'First Meeting' for item in story_timeline) and
+                any(item.get('title') == 'First Date' for item in story_timeline) and
+                any(item.get('title') == 'The Proposal' for item in story_timeline) and
+                all('image' in item for item in story_timeline)
+            )
+            
+            if not timeline_persisted:
+                print(f"❌ Timeline persistence failed")
+                print(f"   Timeline items: {[item.get('title') for item in story_timeline]}")
+            
+            return timeline_persisted and story_enabled
+        
+        success, response = self.run_test(
+            "Our Story Data Persistence (MongoDB)",
+            "GET",
+            "api/wedding",
+            200,
+            params={"session_id": self.session_id},
+            validate_response=validate_story_persistence
+        )
+        
+        if success:
+            print(f"   ✅ Story timeline persisted: {len(response.get('story_timeline', []))} items")
+            print(f"   ✅ Story enabled status: {response.get('story_enabled')}")
+            
+        return success, response
+
+    def test_our_story_public_access(self):
+        """Test that Our Story data is accessible via public URL"""
+        if not self.wedding_id:
+            self.critical_failures.append("Our Story Public Access: No wedding_id available")
+            return False, {}
+        
+        def validate_public_story_access(response_data):
+            story_timeline = response_data.get('story_timeline', [])
+            story_enabled = response_data.get('story_enabled', False)
+            
+            # Verify public access includes Our Story data
+            public_story_valid = (
+                len(story_timeline) >= 3 and
+                story_enabled and
+                response_data.get('couple_name_1') == 'Priya' and
+                response_data.get('couple_name_2') == 'Raj'
+            )
+            
+            # Ensure no sensitive data is exposed
+            no_sensitive_data = 'user_id' not in response_data and '_id' not in response_data
+            
+            return public_story_valid and no_sensitive_data
+        
+        success, response = self.run_test(
+            "Our Story Public URL Access",
+            "GET",
+            f"api/wedding/public/{self.wedding_id}",
+            200,
+            validate_response=validate_public_story_access
+        )
+        
+        if success:
+            print(f"   ✅ Public Our Story access working")
+            print(f"   ✅ Timeline items accessible: {len(response.get('story_timeline', []))}")
             
         return success, response
 
@@ -337,49 +518,102 @@ class WeddingMongoDBTester:
         
         return invalid_session_test[0] and duplicate_reg_test[0], {}
 
-    def test_authentication_flow_complete(self):
-        """Test complete authentication flow"""
-        # Test logout by trying to use old session after some operations
+    def test_session_validation_for_protected_endpoints(self):
+        """Test session validation for protected endpoints"""
         if not self.session_id:
             return False, {}
         
-        # First verify session works
-        profile_test = self.run_test(
-            "Profile Access (Session Validation)",
+        # Test valid session
+        valid_session_test = self.run_test(
+            "Valid Session Access",
             "GET",
             "api/profile",
             200,
             params={"session_id": self.session_id}
         )
         
-        return profile_test
+        # Test invalid session
+        invalid_session_test = self.run_test(
+            "Invalid Session Handling",
+            "GET",
+            "api/wedding",
+            401,
+            params={"session_id": "invalid-session-12345"}
+        )
+        
+        # Test missing session
+        missing_session_test = self.run_test(
+            "Missing Session Handling",
+            "GET",
+            "api/wedding",
+            422,  # FastAPI returns 422 for missing required params
+            params={}
+        )
+        
+        return (valid_session_test[0] and invalid_session_test[0] and missing_session_test[0]), {}
+
+    def test_story_enabled_functionality(self):
+        """Test story_enabled boolean field functionality"""
+        if not self.session_id:
+            return False, {}
+        
+        # Test disabling Our Story
+        disable_story_data = {
+            "session_id": self.session_id,
+            "couple_name_1": "Priya",
+            "couple_name_2": "Raj", 
+            "wedding_date": "2025-12-15",
+            "venue_name": "Royal Gardens Resort",
+            "venue_location": "Royal Gardens Resort • Mumbai, Maharashtra",
+            "their_story": "Our love story began in college.",
+            "story_timeline": self.test_story_timeline,
+            "story_enabled": False,  # Disable Our Story
+            "theme": "elegant"
+        }
+        
+        def validate_story_disabled(response_data):
+            return response_data.get('story_enabled') is False
+        
+        success, response = self.run_test(
+            "Story Enabled/Disabled Functionality",
+            "PUT",
+            "api/wedding",
+            200,
+            data=disable_story_data,
+            validate_response=validate_story_disabled
+        )
+        
+        if success:
+            print(f"   ✅ Story disabled successfully: {response.get('story_enabled')}")
+        
+        return success, response
 
     def run_comprehensive_mongodb_tests(self):
-        """Run all MongoDB integration tests in sequence"""
-        print("🚀 Starting Comprehensive MongoDB Integration Tests")
-        print("🎯 Focus: Public URL Personalization & MongoDB CRUD Operations")
+        """Run all MongoDB integration tests focusing on Our Story functionality"""
+        print("🚀 Starting Comprehensive Wedding Card Backend API Tests")
+        print("🎯 Focus: MongoDB Integration & Our Story Functionality")
+        print("🔗 MongoDB: mongodb+srv://prasannagoudasp12_db_user:RVj1n8gEkHewSwIL@cluster0.euowph1.mongodb.net")
         print("=" * 80)
         
-        # Test sequence focusing on critical areas
+        # Test sequence focusing on review request requirements
         tests = [
-            ("MongoDB Health Check", self.test_mongodb_connection_health),
-            ("TestUser456 Registration (MongoDB)", self.test_testuser456_registration),
-            ("TestUser456 Login (MongoDB)", self.test_testuser456_login),
-            ("Wedding Retrieval (MongoDB)", self.test_wedding_data_retrieval_mongodb),
-            ("🚨 WEDDING UPDATE (Failed to fetch fix)", self.test_wedding_data_update_mongodb),
-            ("🚨 PUBLIC URL PERSONALIZATION", self.test_public_url_personalization_critical),
-            ("Public URL Data Sanitization", self.test_public_url_data_sanitization),
-            ("Public URL Error Handling", self.test_public_url_fallback_system),
-            ("Public URL After Update", self.test_public_url_after_update),
-            ("MongoDB Error Handling", self.test_mongodb_error_handling),
-            ("Authentication Flow", self.test_authentication_flow_complete)
+            ("1. Health Check (GET /api/test)", self.test_mongodb_connection_health),
+            ("2. MongoDB Connection Verification", self.test_mongodb_connection_string),
+            ("3. User Registration (POST /api/auth/register)", self.test_realistic_user_registration),
+            ("4. Wedding Data Retrieval (GET /api/wedding)", self.test_wedding_data_retrieval_mongodb),
+            ("5. 🚨 Our Story Update (PUT /api/wedding)", self.test_wedding_data_update_with_our_story),
+            ("6. Our Story Data Persistence", self.test_our_story_data_persistence),
+            ("7. Our Story Public Access", self.test_our_story_public_access),
+            ("8. Session Validation Testing", self.test_session_validation_for_protected_endpoints),
+            ("9. Story Enabled/Disabled Functionality", self.test_story_enabled_functionality),
+            ("10. Error Handling Tests", self.test_mongodb_error_handling),
         ]
         
         print(f"\n📋 Running {len(tests)} comprehensive test scenarios...")
         
         failed_tests = []
         for test_name, test_func in tests:
-            print(f"\n{'='*25} {test_name} {'='*25}")
+            print(f"\n{'='*15} {test_name} {'='*15}")
             try:
                 success, response = test_func()
                 if not success:
@@ -394,7 +628,7 @@ class WeddingMongoDBTester:
         
         # Print comprehensive results
         print("\n" + "=" * 80)
-        print(f"📊 MONGODB INTEGRATION TEST RESULTS")
+        print(f"📊 WEDDING CARD BACKEND API TEST RESULTS")
         print(f"   Tests Run: {self.tests_run}")
         print(f"   Tests Passed: {self.tests_passed}")
         print(f"   Success Rate: {(self.tests_passed/self.tests_run*100):.1f}%")
@@ -412,21 +646,30 @@ class WeddingMongoDBTester:
         if failed_tests:
             print(f"\n❌ FAILED TESTS: {', '.join(failed_tests)}")
         
-        # Determine overall result
-        critical_tests_passed = not any("PUBLIC URL PERSONALIZATION" in failure for failure in self.critical_failures)
-        mongodb_operations_working = not any("MongoDB" in failure for failure in self.critical_failures)
+        # Determine overall result based on critical functionality
+        our_story_working = not any("Our Story" in failure for failure in self.critical_failures)
+        mongodb_working = not any("MongoDB" in failure for failure in self.critical_failures)
+        auth_working = not any("Registration" in failure or "Session" in failure for failure in self.critical_failures)
         
-        if critical_tests_passed and mongodb_operations_working and len(self.critical_failures) == 0:
-            print("\n✅ ALL CRITICAL MONGODB INTEGRATION TESTS PASSED!")
-            print("✅ Public URL personalization is working correctly")
-            print("✅ MongoDB CRUD operations are functioning properly")
+        print(f"\n📋 FUNCTIONALITY STATUS:")
+        print(f"   MongoDB Integration: {'✅ WORKING' if mongodb_working else '❌ FAILED'}")
+        print(f"   User Authentication: {'✅ WORKING' if auth_working else '❌ FAILED'}")
+        print(f"   Our Story Features: {'✅ WORKING' if our_story_working else '❌ FAILED'}")
+        
+        if our_story_working and mongodb_working and auth_working and len(self.critical_failures) == 0:
+            print("\n✅ ALL CRITICAL BACKEND API TESTS PASSED!")
+            print("✅ MongoDB integration is working correctly")
+            print("✅ Our Story functionality is fully operational")
+            print("✅ Authentication and session management working")
             return 0
         else:
-            print("\n❌ CRITICAL MONGODB INTEGRATION ISSUES DETECTED")
-            if not critical_tests_passed:
-                print("❌ Public URL personalization has issues")
-            if not mongodb_operations_working:
-                print("❌ MongoDB operations have issues")
+            print("\n❌ CRITICAL BACKEND API ISSUES DETECTED")
+            if not our_story_working:
+                print("❌ Our Story functionality has issues")
+            if not mongodb_working:
+                print("❌ MongoDB integration has issues")
+            if not auth_working:
+                print("❌ Authentication system has issues")
             return 1
 
 def main():

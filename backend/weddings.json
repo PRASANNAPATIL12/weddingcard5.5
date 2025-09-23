@@ -650,8 +650,8 @@
     "id": "246c96f6-7118-40c7-8093-9d628f93a0a9"
   },
   "eafe5ff0-4aea-4d6a-a705-aaab655595ed": {
-    "couple_name_1": "Shreedhar",
-    "couple_name_2": "Sneha",
+    "couple_name_1": "Sarah",
+    "couple_name_2": "Michael",
     "wedding_date": "2025-06-15",
     "venue_name": "Sunset Garden Estate",
     "venue_location": "Sunset Garden Estate \u2022 Napa Valley, California",
@@ -912,8 +912,8 @@
         ]
       }
     ],
-    "theme": "classic",
-    "updated_at": "2025-09-21T17:04:06.534826",
+    "theme": "modern",
+    "updated_at": "2025-09-23T17:21:14.295350",
     "user_id": "78ab1adb-86bf-4575-8655-93a0d581c234",
     "id": "eafe5ff0-4aea-4d6a-a705-aaab655595ed",
     "shareable_id": "7703da81",
@@ -1504,5 +1504,79 @@
     "id": "93aa6546-340b-4d21-8483-9accb8e22249",
     "shareable_id": "c458f6c8",
     "created_at": "2025-09-21T18:16:49.447936"
+  },
+  "09eff663-fc9f-4d1f-9827-e1e3ef65bbb6": {
+    "id": "09eff663-fc9f-4d1f-9827-e1e3ef65bbb6",
+    "user_id": "b29745c5-1388-4069-ad01-4d78825baf70",
+    "couple_name_1": "Sarah",
+    "couple_name_2": "Michael",
+    "wedding_date": "2025-06-15",
+    "venue_name": "Sunset Garden Estate",
+    "venue_location": "Sunset Garden Estate \u2022 Napa Valley, California",
+    "their_story": "We can't wait to celebrate our love story with the people who matter most to us. Join us for an unforgettable evening of joy, laughter, and new beginnings.",
+    "story_timeline": [
+      {
+        "year": "2019",
+        "title": "First Meeting",
+        "description": "We met at a coffee shop in downtown San Francisco on a rainy Tuesday morning.",
+        "image": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=400&fit=crop"
+      }
+    ],
+    "schedule_events": [
+      {
+        "time": "2:00 PM",
+        "title": "Guests Arrival & Welcome",
+        "description": "Please arrive by 2:00 PM for welcome drinks and mingling.",
+        "location": "Sunset Garden Estate - Main Entrance",
+        "duration": "30 minutes",
+        "highlight": false
+      }
+    ],
+    "gallery_photos": [],
+    "bridal_party": [],
+    "groom_party": [],
+    "registry_items": [],
+    "honeymoon_fund": {},
+    "faqs": [],
+    "theme": "classic",
+    "created_at": "2025-09-23T15:33:50.137887",
+    "updated_at": "2025-09-23T15:33:50.137889",
+    "shareable_id": "80640e57",
+    "_id": "68d2bddeb3466d2d3780f81b"
+  },
+  "b2e3d76c-3653-49e6-8d48-792df8672290": {
+    "couple_name_1": "Priya",
+    "couple_name_2": "Raj",
+    "wedding_date": "2025-12-15",
+    "venue_name": "Royal Gardens Resort",
+    "venue_location": "Royal Gardens Resort \u2022 Mumbai, Maharashtra",
+    "their_story": "Our love story began in college.",
+    "story_timeline": [
+      {
+        "year": "2020",
+        "title": "First Meeting",
+        "description": "We met at a coffee shop during the pandemic lockdown.",
+        "image": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=400&fit=crop"
+      },
+      {
+        "year": "2022",
+        "title": "First Date",
+        "description": "Our first official date was at a local restaurant.",
+        "image": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop"
+      },
+      {
+        "year": "2024",
+        "title": "The Proposal",
+        "description": "He proposed during a sunset walk on the beach.",
+        "image": "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop"
+      }
+    ],
+    "story_enabled": false,
+    "theme": "elegant",
+    "updated_at": "2025-09-23T16:18:00.956738",
+    "user_id": "905806d3-cd8a-4728-a0d5-462b793f0950",
+    "id": "b2e3d76c-3653-49e6-8d48-792df8672290",
+    "shareable_id": "8617d6a8",
+    "created_at": "2025-09-23T16:17:57.554744"
   }
 }

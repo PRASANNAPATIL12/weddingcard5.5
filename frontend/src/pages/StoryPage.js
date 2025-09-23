@@ -1,43 +1,46 @@
 import React from 'react';
 import { useAppTheme } from '../App';
+import { useUserData } from '../contexts/UserDataContext';
 import { Heart, Calendar, MapPin, Star } from 'lucide-react';
 
 const StoryPage = () => {
   const { themes, currentTheme } = useAppTheme();
+  const { weddingData } = useUserData();
   const theme = themes[currentTheme];
 
-  const timeline = [
-    {
-      year: "2019",
-      title: "First Meeting",
-      description: "We met at a coffee shop in downtown San Francisco on a rainy Tuesday morning. Sarah ordered a lavender latte, and Michael couldn't stop staring at her beautiful smile.",
-      image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=400&fit=crop"
-    },
-    {
-      year: "2020",
-      title: "First Date",
-      description: "Our first official date was a sunset picnic in Golden Gate Park. We talked for hours about our dreams, travels, and favorite books under the stars.",
-      image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=600&h=400&fit=crop"
-    },
-    {
-      year: "2021",
-      title: "Moving In Together",
-      description: "After a year of long-distance dating, we decided to take the next step and move in together. Our first apartment was tiny but filled with so much love.",
-      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop"
-    },
-    {
-      year: "2023",
-      title: "The Proposal",
-      description: "Michael proposed during our vacation in Santorini, Greece. As the sun set over the Aegean Sea, he got down on one knee with Sarah's grandmother's ring.",
-      image: "https://images.unsplash.com/photo-1597248374161-426f3d6f1f6b?w=600&h=400&fit=crop"
-    },
-    {
-      year: "2025",
-      title: "Our Wedding Day",
-      description: "And now, we're ready to say 'I do' surrounded by our family and friends. This is just the beginning of our beautiful journey together.",
-      image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop"
-    }
-  ];
+  // Use dynamic timeline from wedding data, fallback to default if not available
+  const timeline = weddingData.story_timeline || [];
+
+  // If timeline is empty or story is disabled, show a message
+  if (!timeline.length || weddingData.story_enabled === false) {
+    return (
+      <div 
+        className="min-h-screen pt-20 pb-16 px-8 flex items-center justify-center"
+        style={{ background: theme.gradientPrimary }}
+      >
+        <div className="text-center">
+          <h1 
+            className="text-6xl font-light mb-6"
+            style={{ 
+              fontFamily: theme.fontPrimary,
+              color: theme.primary 
+            }}
+          >
+            Our Love Story
+          </h1>
+          <p 
+            className="text-xl leading-relaxed max-w-3xl mx-auto"
+            style={{ color: theme.textLight }}
+          >
+            {weddingData.story_enabled === false 
+              ? "This section is currently disabled."
+              : "No story timeline has been created yet. Please check back soon!"
+            }
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 
