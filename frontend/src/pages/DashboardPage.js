@@ -904,8 +904,8 @@ const FormPopup = ({ sectionId, onClose, onSubmit, initialData, theme }) => {
   );
 };
 
-// Our Story Form Component
-const OurStoryForm = ({ initialData, theme, onSave }) => {
+// Our Story Form Content Component
+const OurStoryFormContent = ({ initialData, theme, onSave }) => {
   const [storyTimeline, setStoryTimeline] = useState(
     initialData.story_timeline || []
   );
