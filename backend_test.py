@@ -518,22 +518,75 @@ class WeddingMongoDBTester:
         
         return invalid_session_test[0] and duplicate_reg_test[0], {}
 
-    def test_authentication_flow_complete(self):
-        """Test complete authentication flow"""
-        # Test logout by trying to use old session after some operations
+    def test_session_validation_for_protected_endpoints(self):
+        """Test session validation for protected endpoints"""
         if not self.session_id:
             return False, {}
         
-        # First verify session works
-        profile_test = self.run_test(
-            "Profile Access (Session Validation)",
+        # Test valid session
+        valid_session_test = self.run_test(
+            "Valid Session Access",
             "GET",
             "api/profile",
             200,
             params={"session_id": self.session_id}
         )
         
-        return profile_test
+        # Test invalid session
+        invalid_session_test = self.run_test(
+            "Invalid Session Handling",
+            "GET",
+            "api/wedding",
+            401,
+            params={"session_id": "invalid-session-12345"}
+        )
+        
+        # Test missing session
+        missing_session_test = self.run_test(
+            "Missing Session Handling",
+            "GET",
+            "api/wedding",
+            422,  # FastAPI returns 422 for missing required params
+            params={}
+        )
+        
+        return (valid_session_test[0] and invalid_session_test[0] and missing_session_test[0]), {}
+
+    def test_story_enabled_functionality(self):
+        """Test story_enabled boolean field functionality"""
+        if not self.session_id:
+            return False, {}
+        
+        # Test disabling Our Story
+        disable_story_data = {
+            "session_id": self.session_id,
+            "couple_name_1": "Priya",
+            "couple_name_2": "Raj", 
+            "wedding_date": "2025-12-15",
+            "venue_name": "Royal Gardens Resort",
+            "venue_location": "Royal Gardens Resort • Mumbai, Maharashtra",
+            "their_story": "Our love story began in college.",
+            "story_timeline": self.test_story_timeline,
+            "story_enabled": False,  # Disable Our Story
+            "theme": "elegant"
+        }
+        
+        def validate_story_disabled(response_data):
+            return response_data.get('story_enabled') is False
+        
+        success, response = self.run_test(
+            "Story Enabled/Disabled Functionality",
+            "PUT",
+            "api/wedding",
+            200,
+            data=disable_story_data,
+            validate_response=validate_story_disabled
+        )
+        
+        if success:
+            print(f"   ✅ Story disabled successfully: {response.get('story_enabled')}")
+        
+        return success, response
 
     def run_comprehensive_mongodb_tests(self):
         """Run all MongoDB integration tests in sequence"""
