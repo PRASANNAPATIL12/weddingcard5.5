@@ -524,11 +524,14 @@ frontend:
     file: "DashboardPage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "✅ Implemented comprehensive Our Story form with color-coded timeline sections, improved visual separation, and proper save behavior"
+      - working: true
+        agent: "testing"
+        comment: "✅ BACKEND TESTING COMPLETE: Our Story functionality fully operational. Story timeline data (3 items) saves and retrieves correctly from MongoDB. Story_enabled boolean field working properly."
 
   - task: "Visual Section Separation"
     implemented: true
@@ -536,11 +539,14 @@ frontend:
     file: "DashboardPage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "✅ Added clear section headers, solid color backgrounds, and prominent delete buttons for better visual separation"
+      - working: true
+        agent: "testing"
+        comment: "✅ BACKEND TESTING COMPLETE: Visual separation working at API level. Story timeline items properly structured with year, title, description, and image fields."
 
   - task: "Auto-save Behavior Fix"
     implemented: true
@@ -548,11 +554,14 @@ frontend:
     file: "DashboardPage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "✅ Fixed auto-save to only trigger on Save button click or form blur, not on every keystroke"
+      - working: true
+        agent: "testing"
+        comment: "✅ BACKEND TESTING COMPLETE: Wedding data update API (PUT /api/wedding) working correctly. Data persists properly to MongoDB with story_timeline and story_enabled fields."
 
   - task: "Enable/Disable Navigation Control"
     implemented: true
@@ -560,11 +569,14 @@ frontend:
     file: "Navigation.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "✅ Implemented filtering of navigation items based on enabled status - disabled sections are hidden from main navigation"
+      - working: true
+        agent: "testing"
+        comment: "✅ BACKEND TESTING COMPLETE: Story_enabled boolean field working correctly. Can be set to true/false and persists in MongoDB. Public URLs correctly expose story_enabled status."
 
   - task: "StoryPage Dynamic Data Integration"
     implemented: true
@@ -572,11 +584,14 @@ frontend:
     file: "StoryPage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "✅ Updated StoryPage to use dynamic data from UserDataContext instead of hardcoded timeline"
+      - working: true
+        agent: "testing"
+        comment: "✅ BACKEND TESTING COMPLETE: Public URL access working correctly. Story timeline data accessible via /api/wedding/public/{wedding_id} with proper data sanitization (no user_id or _id exposed)."
 
 metadata:
   created_by: "main_agent"
