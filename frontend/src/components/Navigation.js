@@ -210,11 +210,11 @@ const Navigation = () => {
         </div>
       </nav>
 
-      {/* Light Translucent Mobile Menu Overlay */}
+      {/* Premium Translucent Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div 
           ref={overlayRef}
-          className={`fixed inset-0 z-[9999] lg:hidden transition-all duration-500 ${
+          className={`fixed inset-0 z-[55] lg:hidden transition-all duration-500 ${
             mobileMenuOpen ? 'opacity-100' : 'opacity-0'
           }`}
           style={{ 
@@ -242,17 +242,21 @@ const Navigation = () => {
             ))}
           </div>
 
-          {/* Light Translucent Mobile Menu Panel */}
+          {/* Premium Drop-down Translucent Mobile Menu Panel */}
           <div 
             ref={menuRef}
-            className={`absolute right-0 top-0 h-full w-80 max-w-[85vw] transition-all duration-500 ease-out ${
-              mobileMenuOpen ? 'transform translate-x-0' : 'transform translate-x-full'
+            className={`absolute left-1/2 transform -translate-x-1/2 w-80 max-w-[90vw] transition-all duration-700 ease-out ${
+              mobileMenuOpen 
+                ? 'top-20 opacity-100 scale-100 translate-y-0' 
+                : 'top-10 opacity-0 scale-95 -translate-y-4'
             }`}
             style={{
-              background: `linear-gradient(135deg, ${theme.background}70, ${theme.secondary}60)`,
+              background: `linear-gradient(135deg, ${theme.background}75, ${theme.secondary}65)`,
               backdropFilter: 'blur(25px)',
               WebkitBackdropFilter: 'blur(25px)',
-              borderLeft: `1px solid ${theme.accent}15`
+              border: `1px solid ${theme.accent}20`,
+              borderRadius: '24px',
+              boxShadow: `0 20px 60px ${theme.accent}10, 0 8px 24px rgba(0, 0, 0, 0.1)`
             }}
           >
             {/* Menu Header - Light and Minimal */}
