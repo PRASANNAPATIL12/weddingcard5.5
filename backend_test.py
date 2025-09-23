@@ -334,39 +334,147 @@ class WeddingMongoDBTester:
         
         return success, response
 
-    def test_wedding_data_update_mongodb(self):
-        """Test wedding data update in MongoDB - CRITICAL TEST for 'Failed to fetch' fix"""
+    def test_wedding_data_update_with_our_story(self):
+        """Test wedding data update with Our Story functionality - CRITICAL TEST"""
         if not self.session_id:
+            self.critical_failures.append("Our Story Update: No session_id available")
             return False, {}
             
         updated_data = {
             "session_id": self.session_id,
-            "couple_name_1": "TestUser456",
-            "couple_name_2": "TestPartner",
-            "wedding_date": "2025-08-15",
-            "venue_name": "Test Venue",
-            "venue_location": "Test Venue • Test City, Test State",
-            "their_story": "UPDATED: This is our test love story that has been updated to test the 'Failed to fetch' fix.",
-            "theme": "modern"
+            "couple_name_1": "Priya",
+            "couple_name_2": "Raj",
+            "wedding_date": "2025-12-15",
+            "venue_name": "Royal Gardens Resort",
+            "venue_location": "Royal Gardens Resort • Mumbai, Maharashtra",
+            "their_story": "Our love story began in college and has grown stronger every day since.",
+            "story_timeline": self.test_story_timeline,
+            "story_enabled": True,
+            "theme": "elegant"
         }
         
-        def validate_update(response_data):
-            return ("UPDATED:" in response_data.get('their_story', '') and
-                   response_data.get('theme') == 'modern' and
-                   response_data.get('couple_name_1') == 'TestUser456')
+        def validate_our_story_update(response_data):
+            # Validate Our Story specific fields
+            story_timeline = response_data.get('story_timeline', [])
+            story_enabled = response_data.get('story_enabled', False)
+            
+            timeline_valid = (
+                len(story_timeline) == 3 and
+                story_timeline[0].get('year') == '2020' and
+                story_timeline[0].get('title') == 'First Meeting' and
+                story_timeline[1].get('year') == '2022' and
+                story_timeline[2].get('year') == '2024' and
+                story_timeline[2].get('title') == 'The Proposal'
+            )
+            
+            basic_data_valid = (
+                response_data.get('couple_name_1') == 'Priya' and
+                response_data.get('couple_name_2') == 'Raj' and
+                response_data.get('venue_name') == 'Royal Gardens Resort'
+            )
+            
+            if not timeline_valid:
+                print(f"❌ Story timeline validation failed")
+                print(f"   Expected 3 timeline items, got {len(story_timeline)}")
+                if story_timeline:
+                    print(f"   First item: {story_timeline[0]}")
+            
+            if not story_enabled:
+                print(f"❌ Story enabled should be True, got {story_enabled}")
+            
+            return timeline_valid and story_enabled and basic_data_valid
         
         success, response = self.run_test(
-            "🚨 CRITICAL: Wedding Data Update (Failed to fetch fix)",
+            "🚨 CRITICAL: Wedding Data Update with Our Story",
             "PUT",
             "api/wedding",
             200,
             data=updated_data,
-            validate_response=validate_update
+            validate_response=validate_our_story_update
         )
         
         if success and response:
             self.wedding_id = response.get('id')
             print(f"   ✅ Wedding ID: {self.wedding_id}")
+            print(f"   ✅ Our Story Timeline: {len(response.get('story_timeline', []))} items")
+            print(f"   ✅ Story Enabled: {response.get('story_enabled')}")
+            
+        return success, response
+
+    def test_our_story_data_persistence(self):
+        """Test that Our Story data persists correctly in MongoDB"""
+        if not self.session_id:
+            self.critical_failures.append("Our Story Persistence: No session_id available")
+            return False, {}
+            
+        def validate_story_persistence(response_data):
+            story_timeline = response_data.get('story_timeline', [])
+            story_enabled = response_data.get('story_enabled', False)
+            
+            # Verify all timeline data persisted correctly
+            timeline_persisted = (
+                len(story_timeline) == 3 and
+                any(item.get('title') == 'First Meeting' for item in story_timeline) and
+                any(item.get('title') == 'First Date' for item in story_timeline) and
+                any(item.get('title') == 'The Proposal' for item in story_timeline) and
+                all('image' in item for item in story_timeline)
+            )
+            
+            if not timeline_persisted:
+                print(f"❌ Timeline persistence failed")
+                print(f"   Timeline items: {[item.get('title') for item in story_timeline]}")
+            
+            return timeline_persisted and story_enabled
+        
+        success, response = self.run_test(
+            "Our Story Data Persistence (MongoDB)",
+            "GET",
+            "api/wedding",
+            200,
+            params={"session_id": self.session_id},
+            validate_response=validate_story_persistence
+        )
+        
+        if success:
+            print(f"   ✅ Story timeline persisted: {len(response.get('story_timeline', []))} items")
+            print(f"   ✅ Story enabled status: {response.get('story_enabled')}")
+            
+        return success, response
+
+    def test_our_story_public_access(self):
+        """Test that Our Story data is accessible via public URL"""
+        if not self.wedding_id:
+            self.critical_failures.append("Our Story Public Access: No wedding_id available")
+            return False, {}
+        
+        def validate_public_story_access(response_data):
+            story_timeline = response_data.get('story_timeline', [])
+            story_enabled = response_data.get('story_enabled', False)
+            
+            # Verify public access includes Our Story data
+            public_story_valid = (
+                len(story_timeline) >= 3 and
+                story_enabled and
+                response_data.get('couple_name_1') == 'Priya' and
+                response_data.get('couple_name_2') == 'Raj'
+            )
+            
+            # Ensure no sensitive data is exposed
+            no_sensitive_data = 'user_id' not in response_data and '_id' not in response_data
+            
+            return public_story_valid and no_sensitive_data
+        
+        success, response = self.run_test(
+            "Our Story Public URL Access",
+            "GET",
+            f"api/wedding/public/{self.wedding_id}",
+            200,
+            validate_response=validate_public_story_access
+        )
+        
+        if success:
+            print(f"   ✅ Public Our Story access working")
+            print(f"   ✅ Timeline items accessible: {len(response.get('story_timeline', []))}")
             
         return success, response
 
