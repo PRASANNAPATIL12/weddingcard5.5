@@ -996,19 +996,58 @@ const OurStoryFormContent = ({ initialData, theme, onSave }) => {
           </div>
 
           {/* Timeline Items */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {storyTimeline.map((item, index) => {
               const colorTheme = timelineColors[index % timelineColors.length];
               
               return (
-                <div
-                  key={index}
-                  className="relative p-6 rounded-2xl border-2 transition-all duration-300"
-                  style={{
-                    backgroundColor: colorTheme.bg,
-                    borderColor: colorTheme.border,
-                  }}
-                >
+                <div className="relative">
+                  {/* Section Header with Clear Numbering */}
+                  <div 
+                    className="flex items-center justify-between mb-4 px-4 py-2 rounded-t-2xl"
+                    style={{
+                      background: `linear-gradient(135deg, ${colorTheme.border}20, ${colorTheme.border}10)`,
+                      borderLeft: `4px solid ${colorTheme.border}`
+                    }}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div
+                        className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg"
+                        style={{ backgroundColor: colorTheme.border }}
+                      >
+                        {index + 1}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-lg" style={{ color: colorTheme.text }}>
+                          Timeline Section #{index + 1}
+                        </h4>
+                        <p className="text-sm opacity-75" style={{ color: colorTheme.text }}>
+                          Complete timeline milestone
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Delete Button - More Prominent */}
+                    <button
+                      onClick={() => removeTimelineItem(index)}
+                      className="flex items-center space-x-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                      title="Delete this entire timeline section"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span className="text-sm font-medium">Delete Section</span>
+                    </button>
+                  </div>
+
+                  {/* Main Content Container */}
+                  <div
+                    key={index}
+                    className="relative p-8 rounded-b-2xl border-4 shadow-xl transition-all duration-300 hover:shadow-2xl"
+                    style={{
+                      backgroundColor: colorTheme.bg,
+                      borderColor: colorTheme.border,
+                      borderTop: 'none'
+                    }}
+                  >
                   {/* Delete Button */}
                   <button
                     onClick={() => removeTimelineItem(index)}
