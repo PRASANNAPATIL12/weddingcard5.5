@@ -378,9 +378,9 @@ const Navigation = () => {
               })}
             </div>
 
-            {/* Light Menu Footer */}
+            {/* Premium Menu Footer */}
             <div className="p-6">
-              <div className="text-center space-y-2">
+              <div className="text-center space-y-3">
                 <p className="text-xs opacity-50" style={{ color: theme.textLight }}>
                   Join us in celebrating our special day
                 </p>
@@ -388,9 +388,10 @@ const Navigation = () => {
                   {[Heart, Sparkles, Star].map((Icon, i) => (
                     <Icon 
                       key={i}
-                      className="w-3 h-3 opacity-40" 
+                      className="w-3 h-3 opacity-40 animate-pulse transition-all duration-300 hover:opacity-80 hover:scale-125" 
                       style={{ 
-                        color: theme.accent
+                        color: theme.accent,
+                        animationDelay: `${i * 0.2}s`
                       }} 
                     />
                   ))}
