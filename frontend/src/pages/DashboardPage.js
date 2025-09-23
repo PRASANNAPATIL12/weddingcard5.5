@@ -795,6 +795,15 @@ const FormPopup = ({ sectionId, onClose, onSubmit, initialData, theme }) => {
           </div>
         );
       
+      case 'story':
+        return (
+          <OurStoryForm 
+            initialData={initialData} 
+            theme={theme} 
+            onSave={handleChange} 
+          />
+        );
+
       case 'theme':
         return (
           <div className="space-y-6">
