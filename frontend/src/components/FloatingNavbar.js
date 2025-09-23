@@ -173,8 +173,8 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
               </div>
             </div>
 
-            {/* Desktop Navigation Items (hidden on mobile) */}
-            <div className="hidden lg:flex items-center ml-8 gap-6">
+            {/* Desktop Navigation Items (hidden on mobile) - Optimized for screen width */}
+            <div className="hidden lg:flex items-center ml-4 gap-3">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = isPublicPage 
@@ -194,7 +194,7 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
                   <NavigationItem
                     key={item.path}
                     {...itemProps}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-500 group relative overflow-hidden ${
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-all duration-500 group relative overflow-hidden ${
                       isActive ? 'scale-105' : 'hover:scale-102'
                     }`}
                     style={{
@@ -208,7 +208,7 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
                     {/* Active indicator */}
                     {isActive && (
                       <div 
-                        className="absolute inset-0 rounded-xl animate-pulse"
+                        className="absolute inset-0 rounded-lg animate-pulse"
                         style={{ 
                           background: `linear-gradient(135deg, ${theme.accent}10, ${theme.accent}05)`,
                           animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
@@ -218,20 +218,23 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
                     
                     {/* Hover effect */}
                     <div 
-                      className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                       style={{ background: `${theme.accent}08` }}
                     />
                     
                     <Icon 
-                      className={`w-4 h-4 relative z-10 transition-all duration-300 ${
+                      className={`w-3.5 h-3.5 relative z-10 transition-all duration-300 flex-shrink-0 ${
                         isActive ? 'scale-110' : 'group-hover:scale-105'
                       }`}
                     />
                     <span 
-                      className={`text-sm font-medium relative z-10 transition-all duration-300 whitespace-nowrap ${
-                        scrolled ? 'text-xs' : 'text-sm'
+                      className={`relative z-10 transition-all duration-300 whitespace-nowrap font-medium ${
+                        scrolled ? 'text-xs' : 'text-xs'
                       }`}
-                      style={{ fontFamily: theme.fontSecondary }}
+                      style={{ 
+                        fontFamily: theme.fontSecondary,
+                        fontSize: '11px'
+                      }}
                     >
                       {item.label}
                     </span>
@@ -239,10 +242,10 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
                     {/* Premium active glow effect */}
                     {isActive && (
                       <div 
-                        className="absolute -inset-0.5 rounded-xl opacity-30 -z-10"
+                        className="absolute -inset-0.5 rounded-lg opacity-30 -z-10"
                         style={{ 
                           background: `linear-gradient(45deg, ${theme.accent}, transparent, ${theme.accent})`,
-                          filter: 'blur(2px)'
+                          filter: 'blur(1px)'
                         }}
                       />
                     )}
@@ -250,19 +253,18 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
                 );
               })}
 
-              {/* Theme Selector for Desktop */}
+              {/* Compact Theme Selector for Desktop */}
               {!isPublicPage && (
-                <div className="flex items-center ml-4 pl-4 border-l border-opacity-20" style={{ borderColor: theme.accent }}>
+                <div className="flex items-center ml-2 pl-2 border-l border-opacity-20" style={{ borderColor: theme.accent }}>
                   <select
                     value={currentTheme}
                     onChange={(e) => setCurrentTheme(e.target.value)}
-                    className={`bg-transparent rounded-lg px-3 py-1 text-xs cursor-pointer transition-all duration-300 focus:outline-none focus:ring-1 ${
-                      scrolled ? 'text-xs' : 'text-sm'
-                    }`}
+                    className="bg-transparent rounded-md px-2 py-1 cursor-pointer transition-all duration-300 focus:outline-none focus:ring-1"
                     style={{ 
                       color: theme.textLight,
                       border: `1px solid ${theme.accent}20`,
-                      focusRing: `${theme.accent}40`
+                      focusRing: `${theme.accent}40`,
+                      fontSize: '10px'
                     }}
                   >
                     <option value="classic">Classic</option>
