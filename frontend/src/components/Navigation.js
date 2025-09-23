@@ -259,31 +259,29 @@ const Navigation = () => {
               boxShadow: `0 20px 60px ${theme.accent}10, 0 8px 24px rgba(0, 0, 0, 0.1)`
             }}
           >
-            {/* Menu Header - Light and Minimal */}
+            {/* Premium Menu Header */}
             <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
+              <div className="text-center mb-6">
+                <div className="flex items-center justify-center gap-3 mb-3">
                   <div className="relative">
                     <Heart className="w-6 h-6" style={{ color: theme.accent }} />
                   </div>
-                  <div>
-                    <h2 
-                      className="text-lg font-bold"
-                      style={{ 
-                        fontFamily: theme.fontPrimary,
-                        color: theme.primary 
-                      }}
-                    >
-                      {weddingData.couple_name_1} & {weddingData.couple_name_2}
-                    </h2>
-                    <p className="text-xs opacity-60" style={{ color: theme.textLight }}>
-                      Wedding Website
-                    </p>
-                  </div>
+                  <h2 
+                    className="text-lg font-bold"
+                    style={{ 
+                      fontFamily: theme.fontPrimary,
+                      color: theme.primary 
+                    }}
+                  >
+                    {weddingData.couple_name_1} & {weddingData.couple_name_2}
+                  </h2>
                 </div>
+                <p className="text-xs opacity-60" style={{ color: theme.textLight }}>
+                  Wedding Website
+                </p>
               </div>
 
-              {/* Light Theme Selector */}
+              {/* Premium Theme Selector */}
               <div className="space-y-2">
                 <label className="text-xs font-medium opacity-60" style={{ color: theme.text }}>
                   Theme
