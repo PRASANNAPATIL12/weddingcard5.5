@@ -491,7 +491,7 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
         </div>
       )}
 
-      {/* Add required CSS animations */}
+      {/* Add required CSS animations and custom scrollbar */}
       <style jsx>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
@@ -511,6 +511,36 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
         
         .animate-float {
           animation: float 6s ease-in-out infinite;
+        }
+
+        /* Custom Scrollbar Styles */
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: ${theme.accent}40 transparent;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+          border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: ${theme.accent}40;
+          border-radius: 3px;
+          transition: background 0.3s ease;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: ${theme.accent}60;
+        }
+
+        /* Smooth scroll behavior */
+        .custom-scrollbar {
+          scroll-behavior: smooth;
         }
       `}</style>
     </>
