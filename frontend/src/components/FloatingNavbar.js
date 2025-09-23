@@ -290,14 +290,18 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
               <div className="space-y-2">
                 {navItems.map((item, index) => {
                   const Icon = item.icon;
-                  const isActive = location.pathname === item.path || 
-                                 (item.path.startsWith('#') && location.hash === item.path);
+                  const isActive = isPublicPage 
+                    ? (activeSection === item.path) 
+                    : (location.pathname === item.path || 
+                       (item.path.startsWith('#') && location.hash === item.path));
                   
                   const itemElement = isPublicPage ? (
-                    <a
+                    <button
                       key={item.path}
-                      href={item.path}
-                      onClick={() => handleMobileNavClick(item.path)}
+                      onClick={() => {
+                        setActiveSection(item.path);
+                        handleMobileNavClick(item.path);
+                      }}
                       className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-500 group relative overflow-hidden ${
                         isActive ? 'scale-105' : 'hover:scale-102'
                       }`}
@@ -318,7 +322,7 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
                         isActive={isActive}
                         theme={theme}
                       />
-                    </a>
+                    </button>
                   ) : (
                     <Link
                       key={item.path}
