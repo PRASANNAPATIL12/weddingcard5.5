@@ -307,37 +307,169 @@ const PublicWeddingPage = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Premium Translucent Mobile Menu Overlay */}
       {mobileMenuOpen && (
         <div 
-          className="lg:hidden absolute top-full left-0 right-0 backdrop-blur-xl border-b"
+          className={`fixed inset-0 z-[55] lg:hidden transition-all duration-500 ${
+            mobileMenuOpen ? 'opacity-100' : 'opacity-0'
+          }`}
           style={{ 
-            backgroundColor: `${theme.background}98`,
-            borderColor: `${theme.accent}20`
+            background: 'rgba(0, 0, 0, 0.15)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)'
           }}
+          onClick={() => setMobileMenuOpen(false)}
         >
-          <div className="px-4 py-4 space-y-2">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveSection(item.id);
-                  setMobileMenuOpen(false);
-                }}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                  activeSection === item.id 
-                    ? 'bg-opacity-20' 
-                    : 'hover:bg-opacity-10'
-                }`}
+          {/* Subtle Animated Background Elements */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute rounded-full opacity-5 animate-float"
                 style={{
-                  backgroundColor: activeSection === item.id ? theme.accent : 'transparent',
-                  color: activeSection === item.id ? theme.primary : theme.textLight
+                  background: `linear-gradient(45deg, ${theme.accent}, ${theme.primary})`,
+                  width: `${Math.random() * 60 + 30}px`,
+                  height: `${Math.random() * 60 + 30}px`,
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${i * 0.8}s`,
+                  animationDuration: `${4 + Math.random() * 2}s`
                 }}
-              >
-                <item.icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
-              </button>
+              />
             ))}
+          </div>
+
+          {/* Premium Drop-down Translucent Mobile Menu Panel */}
+          <div 
+            className={`absolute left-1/2 transform -translate-x-1/2 w-80 max-w-[90vw] transition-all duration-700 ease-out ${
+              mobileMenuOpen 
+                ? 'top-20 opacity-100 scale-100 translate-y-0' 
+                : 'top-10 opacity-0 scale-95 -translate-y-4'
+            }`}
+            style={{
+              background: `linear-gradient(135deg, ${theme.background}75, ${theme.secondary}65)`,
+              backdropFilter: 'blur(25px)',
+              WebkitBackdropFilter: 'blur(25px)',
+              border: `1px solid ${theme.accent}20`,
+              borderRadius: '24px',
+              boxShadow: `0 20px 60px ${theme.accent}10, 0 8px 24px rgba(0, 0, 0, 0.1)`
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Premium Menu Header */}
+            <div className="p-6">
+              <div className="text-center mb-6">
+                <div className="flex items-center justify-center gap-3 mb-3">
+                  <div className="relative">
+                    <Heart className="w-6 h-6" style={{ color: theme.accent }} />
+                  </div>
+                  <h2 
+                    className="text-lg font-bold"
+                    style={{ 
+                      fontFamily: theme.fontPrimary,
+                      color: theme.primary 
+                    }}
+                  >
+                    {weddingData?.couple_name_1} & {weddingData?.couple_name_2}
+                  </h2>
+                </div>
+                <p className="text-xs opacity-60" style={{ color: theme.textLight }}>
+                  Wedding Website
+                </p>
+              </div>
+            </div>
+
+            {/* Premium Navigation Items with Staggered Animation */}
+            <div className="flex-1 px-6 py-2 space-y-1">
+              {navItems.map((item, index) => {
+                const Icon = item.icon;
+                const isActive = activeSection === item.id;
+                const shouldAnimate = mobileMenuOpen;
+                
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveSection(item.id);
+                      setMobileMenuOpen(false);
+                    }}
+                    data-testid={`nav-${item.id}`}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-500 group relative overflow-hidden ${
+                      isActive ? 'scale-105' : 'hover:scale-102'
+                    } ${shouldAnimate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                    style={{ 
+                      background: isActive 
+                        ? `linear-gradient(135deg, ${theme.accent}15, ${theme.accent}08)` 
+                        : 'transparent',
+                      transitionDelay: shouldAnimate ? `${index * 80 + 200}ms` : '0ms',
+                      color: isActive ? theme.accent : theme.text
+                    }}
+                  >
+                    {/* Premium background hover effect */}
+                    <div 
+                      className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-400"
+                      style={{ 
+                        background: `linear-gradient(135deg, ${theme.accent}08, ${theme.accent}03)`,
+                      }}
+                    />
+                    
+                    {/* Icon with micro-animation */}
+                    <div className="relative z-10 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    
+                    {/* Label */}
+                    <span 
+                      className="relative z-10 font-medium text-sm flex-1 transition-all duration-300 group-hover:tracking-wide"
+                      style={{ fontFamily: theme.fontSecondary }}
+                    >
+                      {item.label}
+                    </span>
+                    
+                    {/* Premium arrow indicator */}
+                    <ChevronRight 
+                      className={`w-3 h-3 transition-all duration-400 ${
+                        isActive 
+                          ? 'opacity-100 translate-x-0' 
+                          : 'opacity-0 -translate-x-2 group-hover:opacity-70 group-hover:translate-x-1'
+                      }`}
+                    />
+                    
+                    {/* Active indicator with pulse */}
+                    {isActive && (
+                      <div 
+                        className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 rounded-r-full animate-pulse"
+                        style={{ 
+                          background: `linear-gradient(to bottom, ${theme.accent}, ${theme.accent}60)`,
+                          boxShadow: `0 0 8px ${theme.accent}40`
+                        }}
+                      />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Premium Menu Footer */}
+            <div className="p-6">
+              <div className="text-center space-y-3">
+                <p className="text-xs opacity-50" style={{ color: theme.textLight }}>
+                  Join us in celebrating our special day
+                </p>
+                <div className="flex justify-center gap-2">
+                  {[Heart, Sparkles, Star].map((Icon, i) => (
+                    <Icon 
+                      key={i}
+                      className="w-3 h-3 opacity-40 animate-pulse transition-all duration-300 hover:opacity-80 hover:scale-125" 
+                      style={{ 
+                        color: theme.accent,
+                        animationDelay: `${i * 0.2}s`
+                      }} 
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
