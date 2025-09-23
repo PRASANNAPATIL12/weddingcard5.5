@@ -1,8 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Heart, Sparkles, Star, Zap, ChevronRight } from 'lucide-react';
-import { useAppTheme } from '../App';
-import { useUserData } from '../contexts/UserDataContext';
+import React from 'react';
+import FloatingNavbar from './FloatingNavbar';
 
 const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
