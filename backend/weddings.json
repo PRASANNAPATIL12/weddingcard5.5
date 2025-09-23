@@ -1543,5 +1543,40 @@
     "updated_at": "2025-09-23T15:33:50.137889",
     "shareable_id": "80640e57",
     "_id": "68d2bddeb3466d2d3780f81b"
+  },
+  "b2e3d76c-3653-49e6-8d48-792df8672290": {
+    "couple_name_1": "Priya",
+    "couple_name_2": "Raj",
+    "wedding_date": "2025-12-15",
+    "venue_name": "Royal Gardens Resort",
+    "venue_location": "Royal Gardens Resort \u2022 Mumbai, Maharashtra",
+    "their_story": "Our love story began in college.",
+    "story_timeline": [
+      {
+        "year": "2020",
+        "title": "First Meeting",
+        "description": "We met at a coffee shop during the pandemic lockdown.",
+        "image": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=400&fit=crop"
+      },
+      {
+        "year": "2022",
+        "title": "First Date",
+        "description": "Our first official date was at a local restaurant.",
+        "image": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop"
+      },
+      {
+        "year": "2024",
+        "title": "The Proposal",
+        "description": "He proposed during a sunset walk on the beach.",
+        "image": "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop"
+      }
+    ],
+    "story_enabled": false,
+    "theme": "elegant",
+    "updated_at": "2025-09-23T16:18:00.956738",
+    "user_id": "905806d3-cd8a-4728-a0d5-462b793f0950",
+    "id": "b2e3d76c-3653-49e6-8d48-792df8672290",
+    "shareable_id": "8617d6a8",
+    "created_at": "2025-09-23T16:17:57.554744"
   }
 }

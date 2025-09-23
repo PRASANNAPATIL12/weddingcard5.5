@@ -194,5 +194,12 @@
     "password": "testpassword123",
     "created_at": "2025-09-23 15:33:49.886406",
     "_id": "68d2bdddb3466d2d3780f81a"
+  },
+  "905806d3-cd8a-4728-a0d5-462b793f0950": {
+    "id": "905806d3-cd8a-4728-a0d5-462b793f0950",
+    "username": "priya_raj_1758644277",
+    "password": "wedding2025!",
+    "created_at": "2025-09-23 16:17:57.301183",
+    "_id": "68d2c83598e02426c93e2857"
   }
 }
