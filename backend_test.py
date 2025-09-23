@@ -3,9 +3,13 @@ import sys
 import json
 from datetime import datetime
 import time
+import os
 
 class WeddingMongoDBTester:
-    def __init__(self, base_url="http://localhost:8001"):
+    def __init__(self, base_url=None):
+        # Use environment variable or fallback to localhost
+        if base_url is None:
+            base_url = os.getenv('REACT_APP_BACKEND_URL', 'http://localhost:8001')
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
@@ -15,6 +19,28 @@ class WeddingMongoDBTester:
         self.test_username = None
         self.critical_failures = []
         self.minor_issues = []
+        
+        # Test data for Our Story functionality
+        self.test_story_timeline = [
+            {
+                "year": "2020",
+                "title": "First Meeting",
+                "description": "We met at a coffee shop during the pandemic lockdown.",
+                "image": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=400&fit=crop"
+            },
+            {
+                "year": "2022", 
+                "title": "First Date",
+                "description": "Our first official date was at a local restaurant.",
+                "image": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop"
+            },
+            {
+                "year": "2024",
+                "title": "The Proposal",
+                "description": "He proposed during a sunset walk on the beach.",
+                "image": "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop"
+            }
+        ]
 
     def run_test(self, name, method, endpoint, expected_status, data=None, headers=None, params=None, validate_response=None):
         """Run a single API test with optional response validation"""
