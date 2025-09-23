@@ -589,31 +589,31 @@ class WeddingMongoDBTester:
         return success, response
 
     def run_comprehensive_mongodb_tests(self):
-        """Run all MongoDB integration tests in sequence"""
-        print("🚀 Starting Comprehensive MongoDB Integration Tests")
-        print("🎯 Focus: Public URL Personalization & MongoDB CRUD Operations")
+        """Run all MongoDB integration tests focusing on Our Story functionality"""
+        print("🚀 Starting Comprehensive Wedding Card Backend API Tests")
+        print("🎯 Focus: MongoDB Integration & Our Story Functionality")
+        print("🔗 MongoDB: mongodb+srv://prasannagoudasp12_db_user:RVj1n8gEkHewSwIL@cluster0.euowph1.mongodb.net")
         print("=" * 80)
         
-        # Test sequence focusing on critical areas
+        # Test sequence focusing on review request requirements
         tests = [
-            ("MongoDB Health Check", self.test_mongodb_connection_health),
-            ("TestUser456 Registration (MongoDB)", self.test_testuser456_registration),
-            ("TestUser456 Login (MongoDB)", self.test_testuser456_login),
-            ("Wedding Retrieval (MongoDB)", self.test_wedding_data_retrieval_mongodb),
-            ("🚨 WEDDING UPDATE (Failed to fetch fix)", self.test_wedding_data_update_mongodb),
-            ("🚨 PUBLIC URL PERSONALIZATION", self.test_public_url_personalization_critical),
-            ("Public URL Data Sanitization", self.test_public_url_data_sanitization),
-            ("Public URL Error Handling", self.test_public_url_fallback_system),
-            ("Public URL After Update", self.test_public_url_after_update),
-            ("MongoDB Error Handling", self.test_mongodb_error_handling),
-            ("Authentication Flow", self.test_authentication_flow_complete)
+            ("1. Health Check (GET /api/test)", self.test_mongodb_connection_health),
+            ("2. MongoDB Connection Verification", self.test_mongodb_connection_string),
+            ("3. User Registration (POST /api/auth/register)", self.test_realistic_user_registration),
+            ("4. Wedding Data Retrieval (GET /api/wedding)", self.test_wedding_data_retrieval_mongodb),
+            ("5. 🚨 Our Story Update (PUT /api/wedding)", self.test_wedding_data_update_with_our_story),
+            ("6. Our Story Data Persistence", self.test_our_story_data_persistence),
+            ("7. Our Story Public Access", self.test_our_story_public_access),
+            ("8. Session Validation Testing", self.test_session_validation_for_protected_endpoints),
+            ("9. Story Enabled/Disabled Functionality", self.test_story_enabled_functionality),
+            ("10. Error Handling Tests", self.test_mongodb_error_handling),
         ]
         
         print(f"\n📋 Running {len(tests)} comprehensive test scenarios...")
         
         failed_tests = []
         for test_name, test_func in tests:
-            print(f"\n{'='*25} {test_name} {'='*25}")
+            print(f"\n{'='*15} {test_name} {'='*15}")
             try:
                 success, response = test_func()
                 if not success:
@@ -628,7 +628,7 @@ class WeddingMongoDBTester:
         
         # Print comprehensive results
         print("\n" + "=" * 80)
-        print(f"📊 MONGODB INTEGRATION TEST RESULTS")
+        print(f"📊 WEDDING CARD BACKEND API TEST RESULTS")
         print(f"   Tests Run: {self.tests_run}")
         print(f"   Tests Passed: {self.tests_passed}")
         print(f"   Success Rate: {(self.tests_passed/self.tests_run*100):.1f}%")
@@ -646,21 +646,30 @@ class WeddingMongoDBTester:
         if failed_tests:
             print(f"\n❌ FAILED TESTS: {', '.join(failed_tests)}")
         
-        # Determine overall result
-        critical_tests_passed = not any("PUBLIC URL PERSONALIZATION" in failure for failure in self.critical_failures)
-        mongodb_operations_working = not any("MongoDB" in failure for failure in self.critical_failures)
+        # Determine overall result based on critical functionality
+        our_story_working = not any("Our Story" in failure for failure in self.critical_failures)
+        mongodb_working = not any("MongoDB" in failure for failure in self.critical_failures)
+        auth_working = not any("Registration" in failure or "Session" in failure for failure in self.critical_failures)
         
-        if critical_tests_passed and mongodb_operations_working and len(self.critical_failures) == 0:
-            print("\n✅ ALL CRITICAL MONGODB INTEGRATION TESTS PASSED!")
-            print("✅ Public URL personalization is working correctly")
-            print("✅ MongoDB CRUD operations are functioning properly")
+        print(f"\n📋 FUNCTIONALITY STATUS:")
+        print(f"   MongoDB Integration: {'✅ WORKING' if mongodb_working else '❌ FAILED'}")
+        print(f"   User Authentication: {'✅ WORKING' if auth_working else '❌ FAILED'}")
+        print(f"   Our Story Features: {'✅ WORKING' if our_story_working else '❌ FAILED'}")
+        
+        if our_story_working and mongodb_working and auth_working and len(self.critical_failures) == 0:
+            print("\n✅ ALL CRITICAL BACKEND API TESTS PASSED!")
+            print("✅ MongoDB integration is working correctly")
+            print("✅ Our Story functionality is fully operational")
+            print("✅ Authentication and session management working")
             return 0
         else:
-            print("\n❌ CRITICAL MONGODB INTEGRATION ISSUES DETECTED")
-            if not critical_tests_passed:
-                print("❌ Public URL personalization has issues")
-            if not mongodb_operations_working:
-                print("❌ MongoDB operations have issues")
+            print("\n❌ CRITICAL BACKEND API ISSUES DETECTED")
+            if not our_story_working:
+                print("❌ Our Story functionality has issues")
+            if not mongodb_working:
+                print("❌ MongoDB integration has issues")
+            if not auth_working:
+                print("❌ Authentication system has issues")
             return 1
 
 def main():
