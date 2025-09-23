@@ -8,6 +8,7 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
   const { currentTheme, setCurrentTheme, themes } = useAppTheme();
   const theme = themes[currentTheme];
@@ -26,6 +27,14 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
       setScrolled(window.scrollY > 20);
     };
 
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+      // Close mobile menu if window resized to desktop
+      if (window.innerWidth >= 1024 && mobileMenuOpen) {
+        closeMobileMenu();
+      }
+    };
+
     const handleClickOutside = (event) => {
       if (mobileMenuOpen && overlayRef.current && event.target === overlayRef.current) {
         closeMobileMenu();
@@ -38,13 +47,18 @@ const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, ac
       }
     };
 
+    // Set initial mobile state
+    handleResize();
+
     window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('touchstart', handleClickOutside);
     document.addEventListener('keydown', handleEscapeKey);
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
       document.removeEventListener('keydown', handleEscapeKey);
