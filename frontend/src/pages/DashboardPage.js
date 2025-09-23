@@ -797,11 +797,16 @@ const FormPopup = ({ sectionId, onClose, onSubmit, initialData, theme }) => {
       
       case 'story':
         return (
-          <OurStoryForm 
-            initialData={initialData} 
-            theme={theme} 
-            onSave={handleChange} 
-          />
+          <div className="space-y-6">
+            <h3 className="text-2xl font-semibold mb-6" style={{ color: theme.primary }}>
+              Edit Our Story Section
+            </h3>
+            <OurStoryFormContent 
+              initialData={initialData} 
+              theme={theme} 
+              onSave={handleChange} 
+            />
+          </div>
         );
 
       case 'theme':
