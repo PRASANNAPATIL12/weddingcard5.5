@@ -899,4 +899,259 @@ const FormPopup = ({ sectionId, onClose, onSubmit, initialData, theme }) => {
   );
 };
 
+// Our Story Form Component
+const OurStoryForm = ({ initialData, theme, onSave }) => {
+  const [storyTimeline, setStoryTimeline] = useState(
+    initialData.story_timeline || []
+  );
+  const [storyEnabled, setStoryEnabled] = useState(
+    initialData.story_enabled !== false // Default to enabled if not set
+  );
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // Theme colors for different timeline sections
+  const timelineColors = [
+    { bg: '#E3F2FD', border: '#2196F3', text: '#1565C0' }, // Blue
+    { bg: '#F3E5F5', border: '#9C27B0', text: '#7B1FA2' }, // Purple  
+    { bg: '#E8F5E8', border: '#4CAF50', text: '#388E3C' }, // Green
+    { bg: '#FFF3E0', border: '#FF9800', text: '#F57C00' }, // Orange
+    { bg: '#FCE4EC', border: '#E91E63', text: '#C2185B' }, // Pink
+  ];
+
+  const addTimelineItem = () => {
+    const newItem = {
+      year: new Date().getFullYear().toString(),
+      title: "New Milestone",
+      description: "Tell your story here...",
+      image: "https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?w=600&h=400&fit=crop"
+    };
+    setStoryTimeline([...storyTimeline, newItem]);
+    setHasChanges(true);
+  };
+
+  const removeTimelineItem = (index) => {
+    const updatedTimeline = storyTimeline.filter((_, i) => i !== index);
+    setStoryTimeline(updatedTimeline);
+    setHasChanges(true);
+  };
+
+  const updateTimelineItem = (index, field, value) => {
+    const updatedTimeline = storyTimeline.map((item, i) => 
+      i === index ? { ...item, [field]: value } : item
+    );
+    setStoryTimeline(updatedTimeline);
+    setHasChanges(true);
+  };
+
+  const handleSave = () => {
+    onSave('story_timeline', storyTimeline);
+    onSave('story_enabled', storyEnabled);
+    setHasChanges(false);
+  };
+
+  const handleToggleEnabled = (enabled) => {
+    setStoryEnabled(enabled);
+    setHasChanges(true);
+  };
+
+  return (
+    <div className="space-y-6 max-h-[70vh] overflow-y-auto">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-2xl font-semibold" style={{ color: theme.primary }}>
+          Edit Our Story Section
+        </h3>
+        
+        {/* Enable/Disable Toggle */}
+        <div className="flex items-center space-x-3">
+          <span className="text-sm font-medium" style={{ color: theme.text }}>
+            Section Enabled:
+          </span>
+          <button
+            onClick={() => handleToggleEnabled(!storyEnabled)}
+            className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200 ${
+              storyEnabled ? 'bg-green-500' : 'bg-gray-300'
+            }`}
+          >
+            <span
+              className={`inline-block w-4 h-4 transform transition-transform duration-200 bg-white rounded-full ${
+                storyEnabled ? 'translate-x-6' : 'translate-x-1'
+              }`}
+            />
+          </button>
+        </div>
+      </div>
+
+      {storyEnabled && (
+        <>
+          <div className="mb-6">
+            <p className="text-sm" style={{ color: theme.textLight }}>
+              Create your love story timeline with meaningful milestones. Each section has a unique color theme for easy identification.
+            </p>
+          </div>
+
+          {/* Timeline Items */}
+          <div className="space-y-6">
+            {storyTimeline.map((item, index) => {
+              const colorTheme = timelineColors[index % timelineColors.length];
+              
+              return (
+                <div
+                  key={index}
+                  className="relative p-6 rounded-2xl border-2 transition-all duration-300"
+                  style={{
+                    backgroundColor: colorTheme.bg,
+                    borderColor: colorTheme.border,
+                  }}
+                >
+                  {/* Delete Button */}
+                  <button
+                    onClick={() => removeTimelineItem(index)}
+                    className="absolute top-3 right-3 p-2 rounded-full hover:bg-red-100 text-red-500 transition-colors duration-200"
+                    title="Delete this milestone"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+
+                  {/* Timeline Number */}
+                  <div className="flex items-center mb-4">
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white mr-3"
+                      style={{ backgroundColor: colorTheme.border }}
+                    >
+                      {index + 1}
+                    </div>
+                    <span className="text-sm font-medium" style={{ color: colorTheme.text }}>
+                      Timeline #{index + 1}
+                    </span>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {/* Year */}
+                    <div>
+                      <label className="block text-sm font-medium mb-2" style={{ color: colorTheme.text }}>
+                        Year
+                      </label>
+                      <input
+                        type="text"
+                        value={item.year}
+                        onChange={(e) => updateTimelineItem(index, 'year', e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border-2 transition-colors duration-200 focus:outline-none"
+                        style={{
+                          borderColor: colorTheme.border,
+                          backgroundColor: 'rgba(255,255,255,0.8)',
+                          color: colorTheme.text
+                        }}
+                        placeholder="e.g., 2019"
+                      />
+                    </div>
+
+                    {/* Title */}
+                    <div>
+                      <label className="block text-sm font-medium mb-2" style={{ color: colorTheme.text }}>
+                        Title
+                      </label>
+                      <input
+                        type="text"
+                        value={item.title}
+                        onChange={(e) => updateTimelineItem(index, 'title', e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border-2 transition-colors duration-200 focus:outline-none"
+                        style={{
+                          borderColor: colorTheme.border,
+                          backgroundColor: 'rgba(255,255,255,0.8)',
+                          color: colorTheme.text
+                        }}
+                        placeholder="e.g., First Meeting"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium mb-2" style={{ color: colorTheme.text }}>
+                      Description
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={item.description}
+                      onChange={(e) => updateTimelineItem(index, 'description', e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border-2 transition-colors duration-200 focus:outline-none resize-none"
+                      style={{
+                        borderColor: colorTheme.border,
+                        backgroundColor: 'rgba(255,255,255,0.8)',
+                        color: colorTheme.text
+                      }}
+                      placeholder="Tell your story for this milestone..."
+                    />
+                  </div>
+
+                  {/* Image URL */}
+                  <div className="mt-4">
+                    <label className="block text-sm font-medium mb-2" style={{ color: colorTheme.text }}>
+                      Image URL
+                    </label>
+                    <input
+                      type="url"
+                      value={item.image}
+                      onChange={(e) => updateTimelineItem(index, 'image', e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border-2 transition-colors duration-200 focus:outline-none"
+                      style={{
+                        borderColor: colorTheme.border,
+                        backgroundColor: 'rgba(255,255,255,0.8)',
+                        color: colorTheme.text
+                      }}
+                      placeholder="https://images.unsplash.com/..."
+                    />
+                  </div>
+
+                  {/* Image Preview */}
+                  {item.image && (
+                    <div className="mt-3">
+                      <img
+                        src={item.image}
+                        alt="Preview"
+                        className="w-20 h-20 object-cover rounded-lg border-2"
+                        style={{ borderColor: colorTheme.border }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Add New Timeline Item */}
+          <button
+            onClick={addTimelineItem}
+            className="w-full flex items-center justify-center space-x-2 py-4 rounded-2xl border-2 border-dashed transition-all duration-300 hover:bg-white/10"
+            style={{ borderColor: theme.accent, color: theme.accent }}
+          >
+            <Plus className="w-5 h-5" />
+            <span className="font-medium">Add New Timeline Milestone</span>
+          </button>
+        </>
+      )}
+
+      {/* Save Button */}
+      {hasChanges && (
+        <div className="flex justify-end pt-6 border-t border-white/20">
+          <button
+            onClick={handleSave}
+            className="flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
+            style={{
+              background: theme.gradientAccent,
+              color: theme.primary
+            }}
+          >
+            <Save className="w-4 h-4" />
+            <span>Save Changes</span>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default DashboardPage;
