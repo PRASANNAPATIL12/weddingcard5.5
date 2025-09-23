@@ -970,6 +970,13 @@ const OurStoryFormContent = ({ initialData, theme, onSave }) => {
     setHasChanges(false);
   };
 
+  // Auto-save when form loses focus (user clicks outside)
+  const handleFormBlur = () => {
+    if (hasChanges) {
+      handleSave();
+    }
+  };
+
   const handleToggleEnabled = (enabled) => {
     setStoryEnabled(enabled);
     setHasChanges(true);
