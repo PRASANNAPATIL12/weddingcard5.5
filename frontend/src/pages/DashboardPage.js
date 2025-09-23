@@ -983,7 +983,11 @@ const OurStoryFormContent = ({ initialData, theme, onSave }) => {
   };
 
   return (
-    <div className="space-y-6 max-h-[70vh] overflow-y-auto">
+    <div 
+      className="space-y-6 max-h-[70vh] overflow-y-auto"
+      onBlur={handleFormBlur}
+      tabIndex={-1}
+    >
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-2xl font-semibold" style={{ color: theme.primary }}>
           Edit Our Story Section
