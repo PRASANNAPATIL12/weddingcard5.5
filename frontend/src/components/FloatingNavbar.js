@@ -4,7 +4,7 @@ import { Menu, X, Heart, Sparkles, Star, Zap, ChevronRight, Home, BookOpen, Cale
 import { useAppTheme } from '../App';
 import { useUserData } from '../contexts/UserDataContext';
 
-const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false }) => {
+const FloatingNavbar = ({ weddingData: propWeddingData, isPublicPage = false, activeSection, setActiveSection }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
