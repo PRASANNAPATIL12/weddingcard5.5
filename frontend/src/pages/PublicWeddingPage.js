@@ -249,13 +249,11 @@ const PublicWeddingPage = () => {
             ))}
           </div>
 
-          {/* Premium Floating Mobile Menu Button - Top Center */}
+          {/* Premium Floating Mobile Navbar - Complete Container */}
           <div className="lg:hidden">
-            <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-[60]">
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                data-testid="mobile-nav-toggle"
-                className="relative px-4 py-3 rounded-2xl transition-all duration-500 hover:scale-105 focus:outline-none group shadow-2xl"
+            <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-[60] w-[90vw] max-w-sm">
+              <div
+                className="relative px-4 py-3 rounded-2xl transition-all duration-500 hover:scale-[1.02] focus-within:outline-none group shadow-2xl"
                 style={{ 
                   background: `linear-gradient(135deg, ${theme.background}85, ${theme.secondary}70)`,
                   backdropFilter: 'blur(20px)',
@@ -263,45 +261,75 @@ const PublicWeddingPage = () => {
                   border: `1px solid ${theme.accent}25`,
                   boxShadow: `0 8px 32px ${theme.accent}15`
                 }}
-                aria-label="Toggle mobile menu"
               >
-                {/* Premium 3-Bar Hamburger Animation */}
-                <div className="relative w-6 h-5 flex flex-col justify-between">
-                  <span 
-                    className={`block h-0.5 w-6 rounded-full transition-all duration-500 ease-out transform origin-center ${
-                      mobileMenuOpen 
-                        ? 'rotate-45 translate-y-2' 
-                        : 'rotate-0 translate-y-0'
-                    }`}
-                    style={{ backgroundColor: theme.accent }}
-                  />
-                  <span 
-                    className={`block h-0.5 w-6 rounded-full transition-all duration-300 ease-out ${
-                      mobileMenuOpen 
-                        ? 'opacity-0 scale-0' 
-                        : 'opacity-100 scale-100'
-                    }`}
-                    style={{ backgroundColor: theme.accent }}
-                  />
-                  <span 
-                    className={`block h-0.5 w-6 rounded-full transition-all duration-500 ease-out transform origin-center ${
-                      mobileMenuOpen 
-                        ? '-rotate-45 -translate-y-2' 
-                        : 'rotate-0 translate-y-0'
-                    }`}
-                    style={{ backgroundColor: theme.accent }}
-                  />
+                {/* Navbar Content Container */}
+                <div className="flex items-center justify-between">
+                  
+                  {/* Left Side: Couple Names with Heart */}
+                  <div className="flex items-center space-x-2">
+                    <Heart className="w-5 h-5" style={{ color: theme.accent }} />
+                    <span 
+                      className="text-sm font-semibold truncate"
+                      style={{ 
+                        color: theme.primary,
+                        fontFamily: theme.fontPrimary,
+                        maxWidth: '160px'
+                      }}
+                    >
+                      {weddingData?.couple_name_1} & {weddingData?.couple_name_2}
+                    </span>
+                  </div>
+                  
+                  {/* Right Side: 3-Bar Hamburger Menu */}
+                  <button
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    data-testid="mobile-nav-toggle"
+                    className="relative p-2 rounded-xl transition-all duration-300 hover:scale-110 focus:outline-none"
+                    style={{ 
+                      background: mobileMenuOpen ? `${theme.accent}15` : 'transparent'
+                    }}
+                    aria-label="Toggle mobile menu"
+                  >
+                    {/* Premium 3-Bar Hamburger Animation */}
+                    <div className="relative w-6 h-5 flex flex-col justify-between">
+                      <span 
+                        className={`block h-0.5 w-6 rounded-full transition-all duration-500 ease-out transform origin-center ${
+                          mobileMenuOpen 
+                            ? 'rotate-45 translate-y-2' 
+                            : 'rotate-0 translate-y-0'
+                        }`}
+                        style={{ backgroundColor: theme.accent }}
+                      />
+                      <span 
+                        className={`block h-0.5 w-6 rounded-full transition-all duration-300 ease-out ${
+                          mobileMenuOpen 
+                            ? 'opacity-0 scale-0' 
+                            : 'opacity-100 scale-100'
+                        }`}
+                        style={{ backgroundColor: theme.accent }}
+                      />
+                      <span 
+                        className={`block h-0.5 w-6 rounded-full transition-all duration-500 ease-out transform origin-center ${
+                          mobileMenuOpen 
+                            ? '-rotate-45 -translate-y-2' 
+                            : 'rotate-0 translate-y-0'
+                        }`}
+                        style={{ backgroundColor: theme.accent }}
+                      />
+                    </div>
+                  </button>
+                  
                 </div>
                 
-                {/* Premium hover effect */}
+                {/* Premium hover effect for entire navbar */}
                 <div 
-                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300"
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none"
                   style={{ 
-                    background: `linear-gradient(135deg, ${theme.accent}08, ${theme.accent}15)`,
+                    background: `linear-gradient(135deg, ${theme.accent}05, ${theme.accent}10)`,
                     boxShadow: `0 4px 16px ${theme.accent}20`
                   }}
                 />
-              </button>
+              </div>
             </div>
           </div>
         </div>
