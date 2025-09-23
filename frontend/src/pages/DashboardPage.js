@@ -1001,28 +1001,28 @@ const OurStoryFormContent = ({ initialData, theme, onSave }) => {
               const colorTheme = timelineColors[index % timelineColors.length];
               
               return (
-                <div className="relative">
+                <div key={index} className="relative">
                   {/* Section Header with Clear Numbering */}
                   <div 
-                    className="flex items-center justify-between mb-4 px-4 py-2 rounded-t-2xl"
+                    className="flex items-center justify-between mb-0 px-6 py-4 rounded-t-2xl"
                     style={{
-                      background: `linear-gradient(135deg, ${colorTheme.border}20, ${colorTheme.border}10)`,
-                      borderLeft: `4px solid ${colorTheme.border}`
+                      background: `linear-gradient(135deg, ${colorTheme.border}25, ${colorTheme.border}15)`,
+                      borderLeft: `5px solid ${colorTheme.border}`
                     }}
                   >
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-4">
                       <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg"
+                        className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg"
                         style={{ backgroundColor: colorTheme.border }}
                       >
                         {index + 1}
                       </div>
                       <div>
-                        <h4 className="font-bold text-lg" style={{ color: colorTheme.text }}>
+                        <h4 className="font-bold text-xl" style={{ color: colorTheme.text }}>
                           Timeline Section #{index + 1}
                         </h4>
                         <p className="text-sm opacity-75" style={{ color: colorTheme.text }}>
-                          Complete timeline milestone
+                          Complete timeline milestone section
                         </p>
                       </div>
                     </div>
@@ -1040,7 +1040,6 @@ const OurStoryFormContent = ({ initialData, theme, onSave }) => {
 
                   {/* Main Content Container */}
                   <div
-                    key={index}
                     className="relative p-8 rounded-b-2xl border-4 shadow-xl transition-all duration-300 hover:shadow-2xl"
                     style={{
                       backgroundColor: colorTheme.bg,
@@ -1048,120 +1047,99 @@ const OurStoryFormContent = ({ initialData, theme, onSave }) => {
                       borderTop: 'none'
                     }}
                   >
-                  {/* Delete Button */}
-                  <button
-                    onClick={() => removeTimelineItem(index)}
-                    className="absolute top-3 right-3 p-2 rounded-full hover:bg-red-100 text-red-500 transition-colors duration-200"
-                    title="Delete this milestone"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {/* Year */}
+                      <div>
+                        <label className="block text-sm font-bold mb-3" style={{ color: colorTheme.text }}>
+                          Year
+                        </label>
+                        <input
+                          type="text"
+                          value={item.year}
+                          onChange={(e) => updateTimelineItem(index, 'year', e.target.value)}
+                          className="w-full px-4 py-3 rounded-xl border-2 transition-colors duration-200 focus:outline-none"
+                          style={{
+                            borderColor: colorTheme.border,
+                            backgroundColor: 'rgba(255,255,255,0.9)',
+                            color: colorTheme.text
+                          }}
+                          placeholder="e.g., 2019"
+                        />
+                      </div>
 
-                  {/* Timeline Number */}
-                  <div className="flex items-center mb-4">
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white mr-3"
-                      style={{ backgroundColor: colorTheme.border }}
-                    >
-                      {index + 1}
+                      {/* Title */}
+                      <div>
+                        <label className="block text-sm font-bold mb-3" style={{ color: colorTheme.text }}>
+                          Title
+                        </label>
+                        <input
+                          type="text"
+                          value={item.title}
+                          onChange={(e) => updateTimelineItem(index, 'title', e.target.value)}
+                          className="w-full px-4 py-3 rounded-xl border-2 transition-colors duration-200 focus:outline-none"
+                          style={{
+                            borderColor: colorTheme.border,
+                            backgroundColor: 'rgba(255,255,255,0.9)',
+                            color: colorTheme.text
+                          }}
+                          placeholder="e.g., First Meeting"
+                        />
+                      </div>
                     </div>
-                    <span className="text-sm font-medium" style={{ color: colorTheme.text }}>
-                      Timeline #{index + 1}
-                    </span>
-                  </div>
 
-                  <div className="grid md:grid-cols-2 gap-4">
-                    {/* Year */}
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: colorTheme.text }}>
-                        Year
+                    {/* Description */}
+                    <div className="mt-6">
+                      <label className="block text-sm font-bold mb-3" style={{ color: colorTheme.text }}>
+                        Description
+                      </label>
+                      <textarea
+                        rows={4}
+                        value={item.description}
+                        onChange={(e) => updateTimelineItem(index, 'description', e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border-2 transition-colors duration-200 focus:outline-none resize-none"
+                        style={{
+                          borderColor: colorTheme.border,
+                          backgroundColor: 'rgba(255,255,255,0.9)',
+                          color: colorTheme.text
+                        }}
+                        placeholder="Tell your story for this milestone..."
+                      />
+                    </div>
+
+                    {/* Image URL */}
+                    <div className="mt-6">
+                      <label className="block text-sm font-bold mb-3" style={{ color: colorTheme.text }}>
+                        Image URL
                       </label>
                       <input
-                        type="text"
-                        value={item.year}
-                        onChange={(e) => updateTimelineItem(index, 'year', e.target.value)}
+                        type="url"
+                        value={item.image}
+                        onChange={(e) => updateTimelineItem(index, 'image', e.target.value)}
                         className="w-full px-4 py-3 rounded-xl border-2 transition-colors duration-200 focus:outline-none"
                         style={{
                           borderColor: colorTheme.border,
-                          backgroundColor: 'rgba(255,255,255,0.8)',
+                          backgroundColor: 'rgba(255,255,255,0.9)',
                           color: colorTheme.text
                         }}
-                        placeholder="e.g., 2019"
+                        placeholder="https://images.unsplash.com/..."
                       />
                     </div>
 
-                    {/* Title */}
-                    <div>
-                      <label className="block text-sm font-medium mb-2" style={{ color: colorTheme.text }}>
-                        Title
-                      </label>
-                      <input
-                        type="text"
-                        value={item.title}
-                        onChange={(e) => updateTimelineItem(index, 'title', e.target.value)}
-                        className="w-full px-4 py-3 rounded-xl border-2 transition-colors duration-200 focus:outline-none"
-                        style={{
-                          borderColor: colorTheme.border,
-                          backgroundColor: 'rgba(255,255,255,0.8)',
-                          color: colorTheme.text
-                        }}
-                        placeholder="e.g., First Meeting"
-                      />
-                    </div>
+                    {/* Image Preview */}
+                    {item.image && (
+                      <div className="mt-4">
+                        <img
+                          src={item.image}
+                          alt="Preview"
+                          className="w-24 h-24 object-cover rounded-xl border-4 shadow-lg"
+                          style={{ borderColor: colorTheme.border }}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
-
-                  {/* Description */}
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium mb-2" style={{ color: colorTheme.text }}>
-                      Description
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={item.description}
-                      onChange={(e) => updateTimelineItem(index, 'description', e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border-2 transition-colors duration-200 focus:outline-none resize-none"
-                      style={{
-                        borderColor: colorTheme.border,
-                        backgroundColor: 'rgba(255,255,255,0.8)',
-                        color: colorTheme.text
-                      }}
-                      placeholder="Tell your story for this milestone..."
-                    />
-                  </div>
-
-                  {/* Image URL */}
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium mb-2" style={{ color: colorTheme.text }}>
-                      Image URL
-                    </label>
-                    <input
-                      type="url"
-                      value={item.image}
-                      onChange={(e) => updateTimelineItem(index, 'image', e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border-2 transition-colors duration-200 focus:outline-none"
-                      style={{
-                        borderColor: colorTheme.border,
-                        backgroundColor: 'rgba(255,255,255,0.8)',
-                        color: colorTheme.text
-                      }}
-                      placeholder="https://images.unsplash.com/..."
-                    />
-                  </div>
-
-                  {/* Image Preview */}
-                  {item.image && (
-                    <div className="mt-3">
-                      <img
-                        src={item.image}
-                        alt="Preview"
-                        className="w-20 h-20 object-cover rounded-lg border-2"
-                        style={{ borderColor: colorTheme.border }}
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                        }}
-                      />
-                    </div>
-                  )}
                 </div>
               );
             })}
