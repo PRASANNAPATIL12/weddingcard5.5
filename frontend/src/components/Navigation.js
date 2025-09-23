@@ -303,62 +303,74 @@ const Navigation = () => {
               </div>
             </div>
 
-            {/* Light Navigation Items */}
+            {/* Premium Navigation Items with Staggered Animation */}
             <div className="flex-1 px-6 py-2 space-y-1">
               {navItems.map((item, index) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
-                const shouldAnimate = mobileMenuOpen; // Show all items when menu is open
+                const shouldAnimate = mobileMenuOpen;
                 
                 return (
                   <Link
                     key={item.path}
                     to={item.path}
                     onClick={() => handleMobileNavClick(item.path, index)}
-                    className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-500 group relative overflow-hidden ${
                       isActive ? 'scale-105' : 'hover:scale-102'
-                    } ${shouldAnimate ? 'animate-slide-in-right opacity-100' : 'opacity-0 translate-x-8'}`}
+                    } ${shouldAnimate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                     style={{ 
                       background: isActive 
                         ? `linear-gradient(135deg, ${theme.accent}15, ${theme.accent}08)` 
                         : 'transparent',
-                      animationDelay: `${index * 50}ms`,
+                      transitionDelay: shouldAnimate ? `${index * 80 + 200}ms` : '0ms',
                       color: isActive ? theme.accent : theme.text
                     }}
                   >
-                    {/* Light background hover effect */}
+                    {/* Premium background hover effect */}
                     <div 
-                      className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{ background: `linear-gradient(135deg, ${theme.accent}08, ${theme.accent}03)` }}
+                      className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-400"
+                      style={{ 
+                        background: `linear-gradient(135deg, ${theme.accent}08, ${theme.accent}03)`,
+                        transform: 'translateX(-100%)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.transform = 'translateX(0%)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.transform = 'translateX(-100%)';
+                      }}
                     />
                     
-                    {/* Icon */}
-                    <div className="relative z-10">
-                      <Icon 
-                        className="w-4 h-4"
-                      />
+                    {/* Icon with micro-animation */}
+                    <div className="relative z-10 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                      <Icon className="w-4 h-4" />
                     </div>
                     
                     {/* Label */}
                     <span 
-                      className="relative z-10 font-medium text-sm flex-1"
+                      className="relative z-10 font-medium text-sm flex-1 transition-all duration-300 group-hover:tracking-wide"
                       style={{ fontFamily: theme.fontSecondary }}
                     >
                       {item.label}
                     </span>
                     
-                    {/* Light arrow indicator */}
+                    {/* Premium arrow indicator */}
                     <ChevronRight 
-                      className={`w-3 h-3 transition-all duration-300 ${
-                        isActive ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 group-hover:opacity-50 group-hover:translate-x-0'
+                      className={`w-3 h-3 transition-all duration-400 ${
+                        isActive 
+                          ? 'opacity-100 translate-x-0' 
+                          : 'opacity-0 -translate-x-2 group-hover:opacity-70 group-hover:translate-x-1'
                       }`}
                     />
                     
-                    {/* Subtle active indicator */}
+                    {/* Active indicator with pulse */}
                     {isActive && (
                       <div 
-                        className="absolute left-0 top-1/2 transform -translate-y-1/2 w-0.5 h-6 rounded-r-full animate-scale-in"
-                        style={{ background: theme.accent }}
+                        className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1 h-8 rounded-r-full animate-pulse"
+                        style={{ 
+                          background: `linear-gradient(to bottom, ${theme.accent}, ${theme.accent}60)`,
+                          boxShadow: `0 0 8px ${theme.accent}40`
+                        }}
                       />
                     )}
                   </Link>
