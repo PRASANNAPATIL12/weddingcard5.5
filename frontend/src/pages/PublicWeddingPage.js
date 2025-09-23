@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppTheme } from '../App';
-import { Calendar, MapPin, Heart, Clock, User, MessageCircle, Camera, ArrowLeft, Home, BookOpen, Mail, Users, Gift, HelpCircle, Star, Menu, X } from 'lucide-react';
+import { Calendar, MapPin, Heart, Clock, User, MessageCircle, Camera, ArrowLeft, Home, BookOpen, Mail, Users, Gift, HelpCircle, Star, Menu, X, ChevronRight, Sparkles } from 'lucide-react';
 
 // Default wedding data for fallback
 const defaultWeddingData = {
