@@ -249,18 +249,60 @@ const PublicWeddingPage = () => {
             ))}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Premium Floating Mobile Menu Button - Top Center */}
           <div className="lg:hidden">
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg hover:bg-opacity-10"
-              style={{ 
-                color: theme.primary,
-                backgroundColor: mobileMenuOpen ? `${theme.accent}20` : 'transparent'
-              }}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+            <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-[60]">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                data-testid="mobile-nav-toggle"
+                className="relative px-4 py-3 rounded-2xl transition-all duration-500 hover:scale-105 focus:outline-none group shadow-2xl"
+                style={{ 
+                  background: `linear-gradient(135deg, ${theme.background}85, ${theme.secondary}70)`,
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  border: `1px solid ${theme.accent}25`,
+                  boxShadow: `0 8px 32px ${theme.accent}15`
+                }}
+                aria-label="Toggle mobile menu"
+              >
+                {/* Premium 3-Bar Hamburger Animation */}
+                <div className="relative w-6 h-5 flex flex-col justify-between">
+                  <span 
+                    className={`block h-0.5 w-6 rounded-full transition-all duration-500 ease-out transform origin-center ${
+                      mobileMenuOpen 
+                        ? 'rotate-45 translate-y-2' 
+                        : 'rotate-0 translate-y-0'
+                    }`}
+                    style={{ backgroundColor: theme.accent }}
+                  />
+                  <span 
+                    className={`block h-0.5 w-6 rounded-full transition-all duration-300 ease-out ${
+                      mobileMenuOpen 
+                        ? 'opacity-0 scale-0' 
+                        : 'opacity-100 scale-100'
+                    }`}
+                    style={{ backgroundColor: theme.accent }}
+                  />
+                  <span 
+                    className={`block h-0.5 w-6 rounded-full transition-all duration-500 ease-out transform origin-center ${
+                      mobileMenuOpen 
+                        ? '-rotate-45 -translate-y-2' 
+                        : 'rotate-0 translate-y-0'
+                    }`}
+                    style={{ backgroundColor: theme.accent }}
+                  />
+                </div>
+                
+                {/* Premium hover effect */}
+                <div 
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${theme.accent}08, ${theme.accent}15)`,
+                    boxShadow: `0 4px 16px ${theme.accent}20`
+                  }}
+                />
+              </button>
+            </div>
           </div>
         </div>
       </div>
