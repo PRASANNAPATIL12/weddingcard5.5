@@ -313,7 +313,8 @@ const RSVPPage = () => {
             <div className="text-center">
               <button
                 type="submit"
-                className="inline-flex items-center gap-3 px-12 py-4 rounded-full font-semibold tracking-wider transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+                disabled={submitting}
+                className="inline-flex items-center gap-3 px-12 py-4 rounded-full font-semibold tracking-wider transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 style={{
                   background: theme.gradientAccent,
                   color: theme.primary,
@@ -321,7 +322,7 @@ const RSVPPage = () => {
                 }}
               >
                 <Heart className="w-5 h-5" />
-                Submit RSVP
+                {submitting ? 'Submitting...' : 'Submit RSVP'}
               </button>
             </div>
           </form>
