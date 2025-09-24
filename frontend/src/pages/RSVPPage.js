@@ -147,9 +147,9 @@ const RSVPPage = () => {
                 </label>
                 <input
                   type="text"
-                  name="name"
+                  name="guest_name"
                   required
-                  value={formData.name}
+                  value={formData.guest_name}
                   onChange={handleChange}
                   className="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 focus:border-opacity-50 transition-all duration-300"
                   style={{ 
