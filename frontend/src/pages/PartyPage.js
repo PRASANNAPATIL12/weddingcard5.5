@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAppTheme } from '../App';
+import { useUserData } from '../contexts/UserDataContext';
 import { Heart, Star, Crown, Users } from 'lucide-react';
 
 const PartyPage = () => {
