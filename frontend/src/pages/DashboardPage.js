@@ -721,6 +721,8 @@ const DashboardPage = () => {
           onSubmit={handleFormSubmit}
           initialData={weddingData}
           theme={theme}
+          currentTheme={currentTheme}
+          setCurrentTheme={setCurrentTheme}
         />
       )}
     </div>
