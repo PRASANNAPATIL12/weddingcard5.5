@@ -873,13 +873,16 @@ const FormPopup = ({ sectionId, onClose, onSubmit, initialData, theme }) => {
               {['classic', 'modern', 'boho'].map((themeName) => (
                 <button
                   key={themeName}
-                  onClick={() => handleChange('theme', themeName)}
+                  onClick={() => {
+                    setCurrentTheme(themeName);
+                    handleChange('theme', themeName);
+                  }}
                   className={`p-6 rounded-2xl border-2 transition-all duration-300 ${
-                    initialData.theme === themeName ? 'border-current' : 'border-transparent'
+                    currentTheme === themeName ? 'border-current' : 'border-transparent'
                   }`}
                   style={{ 
                     background: 'rgba(255,255,255,0.1)',
-                    borderColor: initialData.theme === themeName ? theme.accent : 'transparent'
+                    borderColor: currentTheme === themeName ? theme.accent : 'transparent'
                   }}
                 >
                   <div className="text-lg font-semibold capitalize mb-2" style={{ color: theme.primary }}>
