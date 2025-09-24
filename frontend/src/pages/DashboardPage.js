@@ -867,6 +867,20 @@ const FormPopup = ({ sectionId, onClose, onSubmit, initialData, theme }) => {
           </div>
         );
 
+      case 'party':
+        return (
+          <div className="space-y-6">
+            <h3 className="text-2xl font-semibold mb-6" style={{ color: theme.primary }}>
+              Wedding Party Management
+            </h3>
+            <WeddingPartyFormContent 
+              initialData={initialData} 
+              theme={theme} 
+              onSave={handleChange} 
+            />
+          </div>
+        );
+
       default:
         return (
           <div className="space-y-6">
