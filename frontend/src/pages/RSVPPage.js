@@ -7,22 +7,57 @@ import { Heart, Users, Mail, Phone, Check, AlertCircle } from 'lucide-react';
 const RSVPPage = () => {
   const { themes, currentTheme } = useAppTheme();
   const theme = themes[currentTheme];
+  const { weddingData } = useUserData();
+  const { shareableId } = useParams();
   
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
+    guest_name: '',
+    guest_email: '',
+    guest_phone: '',
     attendance: '',
-    guests: 1,
-    dietary: '',
-    message: ''
+    guest_count: 1,
+    dietary_restrictions: '',
+    special_message: ''
   });
   
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    setError('');
+    
+    try {
+      // Determine wedding_id - could be from URL param, current wedding data, or public page data
+      const wedding_id = shareableId || weddingData?.id || weddingData?.shareable_id;
+      
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const response = await fetch(`${backendUrl}/api/rsvp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          wedding_id: wedding_id
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        setError(data.message || 'Failed to submit RSVP. Please try again.');
+      }
+    } catch (err) {
+      console.error('RSVP submission error:', err);
+      setError('Failed to submit RSVP. Please check your connection and try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleChange = (e) => {
