@@ -101,3 +101,104 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: |
+  Clone GitHub repository (https://github.com/PRASANNAPATIL12/weddingcard5.5.git) and create feature/guestbook branch.
+  Keep everything exactly the same as in GitHub - no design changes. Implement the following features:
+  1. Wedding Party Management: Allow users to edit/add/remove wedding party members with photos, names, designations, descriptions
+  2. Functional Guestbook: Make guestbook form save messages to MongoDB and display in real-time
+  3. Theme Switching in Dashboard: Make theme selection apply to entire dashboard, not just navbar
+  Use MongoDB connection provided, support only JPEG/PNG images, use simple name-based authentication
+
+backend:
+  - task: "Clone repository and setup environment"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Successfully cloned repository, set up environment variables, installed dependencies, and got application running"
+
+  - task: "Add guestbook API endpoints"
+    implemented: false
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Need to implement POST and GET endpoints for guestbook messages"
+
+  - task: "Add wedding party API endpoints"
+    implemented: false
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Need to implement endpoints to manage bridal party, groom party, and special roles"
+
+frontend:
+  - task: "Make guestbook functional"
+    implemented: false
+    working: "NA"
+    file: "/app/frontend/src/pages/GuestbookPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Currently shows static messages and alert only. Need to integrate with backend API"
+
+  - task: "Make wedding party editable"
+    implemented: false
+    working: "NA"
+    file: "/app/frontend/src/pages/PartyPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Currently displays static data. Need to make it editable from dashboard with form interface"
+
+  - task: "Fix theme switching in dashboard"
+    implemented: false
+    working: "NA"
+    file: "/app/frontend/src/pages/DashboardPage.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Theme selection currently doesn't apply to entire dashboard. Need to fix theme context propagation"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Add guestbook API endpoints"
+    - "Add wedding party API endpoints"
+    - "Make guestbook functional"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "main"
+      message: "Successfully cloned GitHub repository and set up environment. Application is running. Now implementing guestbook and wedding party management features as requested."
