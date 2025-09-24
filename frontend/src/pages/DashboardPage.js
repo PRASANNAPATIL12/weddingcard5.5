@@ -820,6 +820,19 @@ const FormPopup = ({ sectionId, onClose, onSubmit, initialData, theme }) => {
           </div>
         );
 
+      case 'rsvp':
+        return (
+          <div className="space-y-6">
+            <h3 className="text-2xl font-semibold mb-6" style={{ color: theme.primary }}>
+              RSVP Management
+            </h3>
+            <RSVPAdminContent 
+              weddingData={initialData} 
+              theme={theme} 
+            />
+          </div>
+        );
+
       case 'theme':
         return (
           <div className="space-y-6">
