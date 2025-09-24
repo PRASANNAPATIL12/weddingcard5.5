@@ -204,9 +204,20 @@ const LeftSidebar = () => {
     
     switch (featureId) {
       case 'whatsapp':
-        const whatsappText = `Check out our wedding card! 💒✨ ${weddingData.couple_name_1} & ${weddingData.couple_name_2} are getting married on ${weddingData.wedding_date}!`;
-        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(whatsappText + ' ' + shareableUrl)}`;
-        window.open(whatsappUrl, '_blank');
+        const whatsappText = `Check out our wedding card! 💒✨ ${weddingData.couple_name_1} & ${weddingData.couple_name_2} are getting married on ${weddingData.wedding_date}! ${shareableUrl}`;
+        
+        // Detect if user is on mobile or desktop
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+          // Mobile: Open WhatsApp app directly with pre-filled message
+          const whatsappAppUrl = `whatsapp://send?text=${encodeURIComponent(whatsappText)}`;
+          window.open(whatsappAppUrl, '_blank');
+        } else {
+          // Desktop: Open WhatsApp Web with pre-filled message - allows selecting multiple contacts
+          const whatsappWebUrl = `https://web.whatsapp.com/send?text=${encodeURIComponent(whatsappText)}`;
+          window.open(whatsappWebUrl, '_blank');
+        }
         break;
       
       case 'gmail':
