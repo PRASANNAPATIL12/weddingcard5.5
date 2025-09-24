@@ -544,6 +544,76 @@ async def get_profile(session_id: str):
         "created_at": current_user.created_at
     }
 
+# RSVP Endpoints
+@api_router.post("/rsvp")
+async def submit_rsvp(rsvp_data: dict):
+    users_coll, weddings_coll = await get_collections()
+    
+    # Create RSVP response
+    rsvp_response = RSVPResponse(
+        wedding_id=rsvp_data.get('wedding_id', ''),
+        guest_name=rsvp_data.get('guest_name', ''),
+        guest_email=rsvp_data.get('guest_email', ''),
+        guest_phone=rsvp_data.get('guest_phone', ''),
+        attendance=rsvp_data.get('attendance', ''),
+        guest_count=int(rsvp_data.get('guest_count', 1)),
+        dietary_restrictions=rsvp_data.get('dietary_restrictions', ''),
+        special_message=rsvp_data.get('special_message', '')
+    )
+    
+    # Convert to dict
+    rsvp_dict = rsvp_response.dict()
+    rsvp_dict["submitted_at"] = rsvp_dict["submitted_at"].isoformat()
+    
+    # Store RSVP in separate collection
+    rsvps_collection = database.rsvps
+    await rsvps_collection.insert_one(rsvp_dict)
+    
+    return {"success": True, "message": "RSVP submitted successfully", "rsvp_id": rsvp_response.id}
+
+@api_router.get("/rsvp/{wedding_id}")
+async def get_wedding_rsvps(wedding_id: str):
+    """Get all RSVPs for a specific wedding (for admin/couple view)"""
+    users_coll, weddings_coll = await get_collections()
+    
+    # Get RSVPs for this wedding
+    rsvps_collection = database.rsvps
+    rsvps = await rsvps_collection.find({"wedding_id": wedding_id}).to_list(length=None)
+    
+    # Remove _id from response and format dates
+    response_data = []
+    for rsvp in rsvps:
+        clean_rsvp = {k: v for k, v in rsvp.items() if k != "_id"}
+        response_data.append(clean_rsvp)
+    
+    return {"success": True, "rsvps": response_data, "total_count": len(response_data)}
+
+@api_router.get("/rsvp/shareable/{shareable_id}")  
+async def get_rsvps_by_shareable_id(shareable_id: str):
+    """Get RSVPs using shareable ID (for dashboard admin view)"""
+    users_coll, weddings_coll = await get_collections()
+    
+    # First find the wedding by shareable_id
+    wedding = await weddings_coll.find_one({"shareable_id": shareable_id})
+    
+    if not wedding:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Wedding not found"
+        )
+    
+    # Get RSVPs for this wedding
+    rsvps_collection = database.rsvps
+    rsvps = await rsvps_collection.find({"wedding_id": wedding["id"]}).to_list(length=None)
+    
+    # Remove _id from response
+    response_data = []
+    for rsvp in rsvps:
+        clean_rsvp = {k: v for k, v in rsvp.items() if k != "_id"}
+        response_data.append(clean_rsvp)
+    
+    return {"success": True, "rsvps": response_data, "total_count": len(response_data)}
+
 # Test endpoint to verify connectivity
 @api_router.get("/test")
 async def test_endpoint():
