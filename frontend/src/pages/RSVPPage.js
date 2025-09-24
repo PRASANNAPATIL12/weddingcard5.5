@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useAppTheme } from '../App';
-import { Heart, Users, Mail, Phone, Check } from 'lucide-react';
+import { useUserData } from '../contexts/UserDataContext';
+import { Heart, Users, Mail, Phone, Check, AlertCircle } from 'lucide-react';
 
 const RSVPPage = () => {
   const { themes, currentTheme } = useAppTheme();
