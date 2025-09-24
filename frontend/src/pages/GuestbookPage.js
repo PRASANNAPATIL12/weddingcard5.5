@@ -6,6 +6,7 @@ import { Heart, MessageCircle, User, Send, Star, Loader } from 'lucide-react';
 const GuestbookPage = () => {
   const { themes, currentTheme } = useAppTheme();
   const theme = themes[currentTheme];
+  const { weddingData } = useUserData();
   
   const [newMessage, setNewMessage] = useState({
     name: '',
@@ -13,58 +14,75 @@ const GuestbookPage = () => {
     relationship: ''
   });
 
-  const [messages] = useState([
-    {
-      id: 1,
-      name: "Emily Johnson",
-      relationship: "Sister of the Bride",
-      message: "Sarah, watching you find your perfect match in Michael fills my heart with so much joy. You two are meant to be together, and I can't wait to see all the beautiful adventures ahead of you. Love you both!",
-      date: "2 days ago"
-    },
-    {
-      id: 2,
-      name: "David Thompson",
-      relationship: "Brother of the Groom",
-      message: "Michael, you've found your person, and it shows in everything you do. Sarah brings out the best in you, and together you're unstoppable. Wishing you a lifetime of happiness and laughter!",
-      date: "3 days ago"
-    },
-    {
-      id: 3,
-      name: "Jessica Chen",
-      relationship: "College Friend",
-      message: "From our dorm room talks about finding 'the one' to watching you walk down the aisle - this moment is everything you dreamed of and more. You and Michael are perfect together. Congratulations!",
-      date: "5 days ago"
-    },
-    {
-      id: 4,
-      name: "Ryan Mitchell",
-      relationship: "College Buddy",
-      message: "Mike, remember when you first told me about Sarah? Your whole face lit up. That light has never faded, and now I know why. You two are incredible together. Here's to your happily ever after!",
-      date: "1 week ago"
-    },
-    {
-      id: 5,
-      name: "Amanda Rodriguez",
-      relationship: "Work Friend",
-      message: "Sarah, you deserve all the happiness in the world, and Michael is clearly the one to give it to you. Your love story gives me hope and makes me believe in true love. Congratulations to you both!",
-      date: "1 week ago"
-    },
-    {
-      id: 6,
-      name: "James Park",
-      relationship: "Colleague",
-      message: "Michael talks about Sarah with such love and admiration. It's beautiful to see two people so perfectly matched. Wishing you both a marriage filled with love, laughter, and endless adventures!",
-      date: "2 weeks ago"
-    }
-  ]);
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  // Get wedding ID for API calls
+  const weddingId = weddingData?.id || 'default';
+
+  useEffect(() => {
+    fetchMessages();
+  }, [weddingId]);
+
+  const fetchMessages = async () => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const response = await fetch(`${backendUrl}/api/guestbook/${weddingId}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setMessages(data.messages || []);
+      } else {
+        setError('Failed to load messages');
+      }
+    } catch (err) {
+      console.error('Error fetching messages:', err);
+      setError('Failed to load messages');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In a real app, this would save to database
-    console.log('New message:', newMessage);
-    setNewMessage({ name: '', message: '', relationship: '' });
-    // Show success message
-    alert('Thank you for your beautiful message! It means the world to us.');
+    setSubmitting(true);
+    setError('');
+    
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const response = await fetch(`${backendUrl}/api/guestbook`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...newMessage,
+          wedding_id: weddingId
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setNewMessage({ name: '', message: '', relationship: '' });
+        // Refresh messages to show the new one
+        await fetchMessages();
+        // Show success message without alert
+        setError('');
+      } else {
+        setError('Failed to send message. Please try again.');
+      }
+    } catch (err) {
+      console.error('Error submitting message:', err);
+      setError('Failed to send message. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -72,6 +90,30 @@ const GuestbookPage = () => {
       ...newMessage,
       [e.target.name]: e.target.value
     });
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) {
+      return 'Today';
+    } else if (diffDays === 1) {
+      return '1 day ago';
+    } else if (diffDays < 7) {
+      return `${diffDays} days ago`;
+    } else if (diffDays < 30) {
+      const weeks = Math.floor(diffDays / 7);
+      return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+    } else {
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    }
   };
 
   return (
