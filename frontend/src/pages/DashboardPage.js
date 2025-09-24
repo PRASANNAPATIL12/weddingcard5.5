@@ -32,7 +32,8 @@ import {
   Camera,
   Star,
   Music,
-  Utensils
+  Utensils,
+  Phone
 } from 'lucide-react';
 
 // Import homepage components for mini preview
