@@ -201,5 +201,12 @@
     "password": "wedding2025!",
     "created_at": "2025-09-23 16:17:57.301183",
     "_id": "68d2c83598e02426c93e2857"
+  },
+  "5175283a-bd0f-4665-bc3d-9ab57dcc844f": {
+    "id": "5175283a-bd0f-4665-bc3d-9ab57dcc844f",
+    "username": "rsvp_test_user_1758716441",
+    "password": "rsvptest2025!",
+    "created_at": "2025-09-24 12:20:41.270369",
+    "_id": "68d3e2194ee05f616fb4ef75"
   }
 }
