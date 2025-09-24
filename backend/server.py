@@ -497,46 +497,247 @@ async def get_wedding_by_shareable_id(shareable_id: str):
             # Remove sensitive data for public access
             public_data = {k: v for k, v in wedding_data.items() if k not in ["user_id"]}
             return public_data
+
+# Username-based routing endpoints
+@api_router.get("/wedding/user/{username}")
+async def get_wedding_by_username(username: str):
+    """Get wedding data by username for personalized URLs"""
+    users_coll, weddings_coll = await get_collections()
     
-    # If not found by shareable ID, return enhanced default data
-    enhanced_default_data = {
+    # Find user by username
+    user = await users_coll.find_one({"username": username})
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Get user's wedding data
+    wedding = await weddings_coll.find_one({"user_id": user["id"]})
+    if not wedding:
+        # Return default wedding data if user hasn't customized yet
+        return get_default_wedding_data()
+    
+    # Remove sensitive data for public access
+    public_data = {k: v for k, v in wedding.items() if k not in ["user_id", "_id"]}
+    return public_data
+
+@api_router.get("/wedding/user/{username}/{section}")
+async def get_wedding_section_by_username(username: str, section: str):
+    """Get specific section data by username for section-based URLs"""
+    users_coll, weddings_coll = await get_collections()
+    
+    # Find user by username
+    user = await users_coll.find_one({"username": username})
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Get user's wedding data
+    wedding = await weddings_coll.find_one({"user_id": user["id"]})
+    if not wedding:
+        # Return default wedding data if user hasn't customized yet
+        wedding = get_default_wedding_data()
+    
+    # Remove sensitive data
+    public_data = {k: v for k, v in wedding.items() if k not in ["user_id", "_id"]}
+    
+    # Add section metadata
+    public_data["current_section"] = section
+    public_data["username"] = username
+    
+    return public_data
+
+def get_default_wedding_data():
+    """Return default wedding card data"""
+    return {
         "id": "default",
-        "shareable_id": shareable_id,
         "couple_name_1": "Sarah",
         "couple_name_2": "Michael",
         "wedding_date": "2025-06-15",
         "venue_name": "Sunset Garden Estate",
-        "venue_location": "Sunset Garden Estate • Napa Valley, California",
-        "their_story": "We can't wait to celebrate our love story with the people who matter most to us. Join us for an unforgettable evening of joy, laughter, and new beginnings.",
+        "venue_location": "Napa Valley, California",
+        "their_story": "Our beautiful love story began when we met at a coffee shop in downtown San Francisco...",
         "story_timeline": [
             {
                 "year": "2019",
                 "title": "First Meeting",
-                "description": "We met at a coffee shop in downtown San Francisco on a rainy Tuesday morning.",
-                "image": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=600&h=400&fit=crop"
+                "description": "We met at Blue Bottle Coffee on a rainy Tuesday morning. Sarah was reading a book about sustainable architecture, and Michael couldn't help but strike up a conversation.",
+                "image": "https://images.unsplash.com/photo-1511988617509-a57c8a288659?w=400"
+            },
+            {
+                "year": "2020",
+                "title": "First Date",
+                "description": "Our first official date was a hiking trip to Mount Tamalpais. We spent hours talking about our dreams and aspirations while watching the sunset over the Bay Area.",
+                "image": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400"
+            },
+            {
+                "year": "2022",
+                "title": "Moving In Together",
+                "description": "We decided to take the next step and move in together in a cozy apartment in Mission District. Our first shared space became our little sanctuary.",
+                "image": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400"
+            },
+            {
+                "year": "2024",
+                "title": "The Proposal",
+                "description": "Michael proposed during a weekend getaway to Big Sur. He had planned the perfect moment during a sunset walk along the cliffs overlooking the Pacific Ocean.",
+                "image": "https://images.unsplash.com/photo-1469371670807-013ccf25f16a?w=400"
             }
         ],
         "schedule_events": [
             {
                 "time": "2:00 PM",
-                "title": "Guests Arrival & Welcome",
-                "description": "Please arrive by 2:00 PM for welcome drinks and mingling.",
-                "location": "Sunset Garden Estate - Main Entrance",
-                "duration": "30 minutes",
+                "title": "Ceremony",
+                "description": "Join us for our wedding ceremony in the beautiful garden pavilion",
+                "location": "Garden Pavilion",
+                "duration": "45 minutes",
+                "highlight": True
+            },
+            {
+                "time": "3:00 PM",
+                "title": "Cocktail Hour",
+                "description": "Celebrate with drinks and appetizers on the terrace",
+                "location": "Sunset Terrace",
+                "duration": "60 minutes",
                 "highlight": False
+            },
+            {
+                "time": "4:30 PM",
+                "title": "Reception",
+                "description": "Dinner, dancing, and celebration in the grand ballroom",
+                "location": "Grand Ballroom",
+                "duration": "5 hours",
+                "highlight": True
             }
         ],
-        "gallery_photos": [],
-        "bridal_party": [],
-        "groom_party": [],
-        "special_roles": [],
-        "registry_items": [],
-        "honeymoon_fund": {},
-        "faqs": [],
-        "theme": "classic"
+        "gallery_photos": {
+            "engagement": [
+                "https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=500",
+                "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=500",
+                "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=500"
+            ],
+            "travel": [
+                "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500",
+                "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500",
+                "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?w=500"
+            ],
+            "family": [
+                "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=500",
+                "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=500",
+                "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500"
+            ]
+        },
+        "bridal_party": [
+            {
+                "name": "Emma Johnson",
+                "designation": "Maid of Honor",
+                "description": "Sarah's best friend since college and her constant source of laughter and support.",
+                "photo": "https://images.unsplash.com/photo-1494790108755-2616b612b789?w=300"
+            },
+            {
+                "name": "Rachel Davis",
+                "designation": "Bridesmaid",
+                "description": "Sarah's sister and adventure buddy who shares her love for hiking and travel.",
+                "photo": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300"
+            },
+            {
+                "name": "Lisa Chen",
+                "designation": "Bridesmaid",
+                "description": "College roommate turned lifelong friend, always there with wise advice and hugs.",
+                "photo": "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=300"
+            }
+        ],
+        "groom_party": [
+            {
+                "name": "David Wilson",
+                "designation": "Best Man",
+                "description": "Michael's brother and partner in crime since childhood adventures.",
+                "photo": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300"
+            },
+            {
+                "name": "James Miller",
+                "designation": "Groomsman",
+                "description": "College best friend and Michael's go-to person for both serious talks and fun times.",
+                "photo": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300"
+            },
+            {
+                "name": "Alex Rodriguez",
+                "designation": "Groomsman",
+                "description": "Work colleague turned close friend who shares Michael's passion for technology and good coffee.",
+                "photo": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300"
+            }
+        ],
+        "special_roles": [
+            {
+                "name": "Grace Thompson",
+                "designation": "Flower Girl",
+                "description": "Sarah's adorable 6-year-old niece who will sprinkle flower petals down the aisle.",
+                "photo": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300"
+            },
+            {
+                "name": "Oliver Wilson",
+                "designation": "Ring Bearer",
+                "description": "Michael's nephew who will proudly carry the rings with the biggest smile.",
+                "photo": "https://images.unsplash.com/photo-1519340333755-56e9c1d3611d?w=300"
+            }
+        ],
+        "registry_items": [
+            {
+                "name": "Professional Stand Mixer",
+                "description": "For all our future baking adventures together",
+                "price": "$299.99",
+                "store": "Williams Sonoma",
+                "purchased": False,
+                "image": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300"
+            },
+            {
+                "name": "Luxury Bedding Set",
+                "description": "Soft organic cotton sheets for cozy nights",
+                "price": "$199.99",
+                "store": "West Elm",
+                "purchased": False,
+                "image": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300"
+            },
+            {
+                "name": "Honeymoon Fund",
+                "description": "Help us create memories on our dream honeymoon to Italy",
+                "price": "Any Amount",
+                "store": "Honeymoon Fund",
+                "purchased": False,
+                "image": "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=300"
+            }
+        ],
+        "honeymoon_fund": {
+            "enabled": True,
+            "goal": 5000,
+            "current": 0,
+            "description": "Help us create unforgettable memories on our honeymoon to Italy!"
+        },
+        "faqs": [
+            {
+                "question": "What should I wear?",
+                "answer": "We're having a garden ceremony, so we recommend cocktail attire. Ladies, consider comfortable shoes for outdoor surfaces."
+            },
+            {
+                "question": "Will there be parking available?",
+                "answer": "Yes, there is complimentary valet parking available at the venue entrance."
+            },
+            {
+                "question": "Can I bring a guest?",
+                "answer": "Please check your invitation for guest details. If you have any questions, feel free to reach out to us directly."
+            },
+            {
+                "question": "Is the venue accessible?",
+                "answer": "Yes, Sunset Garden Estate is fully wheelchair accessible with ramps and accessible restroom facilities."
+            }
+        ],
+        "theme": "classic",
+        "rsvp_responses": [],
+        "created_at": "2024-01-01T00:00:00",
+        "updated_at": "2024-01-01T00:00:00"
     }
-    
-    return enhanced_default_data
 
 # Get user profile - MongoDB version
 @api_router.get("/profile")
