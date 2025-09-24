@@ -167,6 +167,12 @@ const GuestbookPage = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="p-4 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 text-center">
+                {error}
+              </div>
+            )}
+            
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label 
@@ -183,7 +189,8 @@ const GuestbookPage = () => {
                     required
                     value={newMessage.name}
                     onChange={handleChange}
-                    className="w-full pl-12 pr-6 py-4 rounded-xl bg-white/20 border border-white/30 focus:border-opacity-50 transition-all duration-300"
+                    disabled={submitting}
+                    className="w-full pl-12 pr-6 py-4 rounded-xl bg-white/20 border border-white/30 focus:border-opacity-50 transition-all duration-300 disabled:opacity-50"
                     style={{ 
                       color: theme.text,
                       borderColor: `${theme.accent}40`
@@ -205,7 +212,8 @@ const GuestbookPage = () => {
                   name="relationship"
                   value={newMessage.relationship}
                   onChange={handleChange}
-                  className="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 focus:border-opacity-50 transition-all duration-300"
+                  disabled={submitting}
+                  className="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 focus:border-opacity-50 transition-all duration-300 disabled:opacity-50"
                   style={{ 
                     color: theme.text,
                     borderColor: `${theme.accent}40`
@@ -227,27 +235,33 @@ const GuestbookPage = () => {
                 required
                 value={newMessage.message}
                 onChange={handleChange}
+                disabled={submitting}
                 rows={5}
-                className="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 focus:border-opacity-50 transition-all duration-300 resize-none"
+                className="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 focus:border-opacity-50 transition-all duration-300 resize-none disabled:opacity-50"
                 style={{ 
                   color: theme.text,
                   borderColor: `${theme.accent}40`
                 }}
-                placeholder="Share your thoughts, wishes, or favorite memories with Sarah & Michael..."
+                placeholder={`Share your thoughts, wishes, or favorite memories with ${weddingData?.couple_name_1 || 'Sarah'} & ${weddingData?.couple_name_2 || 'Michael'}...`}
               />
             </div>
 
             <div className="text-center">
               <button
                 type="submit"
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold tracking-wider transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                disabled={submitting}
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-full font-semibold tracking-wider transition-all duration-300 hover:-translate-y-1 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 style={{
                   background: theme.gradientAccent,
                   color: theme.primary
                 }}
               >
-                <Send className="w-5 h-5" />
-                Send Message
+                {submitting ? (
+                  <Loader className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Send className="w-5 h-5" />
+                )}
+                {submitting ? 'Sending...' : 'Send Message'}
               </button>
             </div>
           </form>
