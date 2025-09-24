@@ -171,9 +171,9 @@ const RSVPPage = () => {
                   <Mail className="absolute left-4 top-4 w-5 h-5 opacity-50" style={{ color: theme.textLight }} />
                   <input
                     type="email"
-                    name="email"
+                    name="guest_email"
                     required
-                    value={formData.email}
+                    value={formData.guest_email}
                     onChange={handleChange}
                     className="w-full pl-12 pr-6 py-4 rounded-xl bg-white/20 border border-white/30 focus:border-opacity-50 transition-all duration-300"
                     style={{ 
