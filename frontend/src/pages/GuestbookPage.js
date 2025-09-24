@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppTheme } from '../App';
-import { Heart, MessageCircle, User, Send, Star } from 'lucide-react';
+import { useUserData } from '../contexts/UserDataContext';
+import { Heart, MessageCircle, User, Send, Star, Loader } from 'lucide-react';
 
 const GuestbookPage = () => {
   const { themes, currentTheme } = useAppTheme();
