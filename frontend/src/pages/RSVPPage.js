@@ -290,8 +290,8 @@ const RSVPPage = () => {
                 Special Message for the Couple
               </label>
               <textarea
-                name="message"
-                value={formData.message}
+                name="special_message"
+                value={formData.special_message}
                 onChange={handleChange}
                 rows={4}
                 className="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 focus:border-opacity-50 transition-all duration-300 resize-none"
