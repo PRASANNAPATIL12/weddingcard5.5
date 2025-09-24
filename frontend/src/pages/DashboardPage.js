@@ -1455,4 +1455,334 @@ const RSVPAdminContent = ({ weddingData, theme }) => {
   );
 };
 
+// Wedding Party Form Content Component
+const WeddingPartyFormContent = ({ initialData, theme, onSave }) => {
+  const [bridalParty, setBridalParty] = useState(
+    initialData.bridal_party || []
+  );
+  const [groomParty, setGroomParty] = useState(
+    initialData.groom_party || []
+  );
+  const [specialRoles, setSpecialRoles] = useState(
+    initialData.special_roles || []
+  );
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // Add new party member
+  const addPartyMember = (partyType) => {
+    const newMember = {
+      id: Date.now().toString(), // Simple ID generation
+      name: "",
+      role: "",
+      relationship: "",
+      description: "",
+      image: "https://images.unsplash.com/photo-1494790108755-2616b612b734?w=400&h=400&fit=crop&crop=face"
+    };
+
+    if (partyType === 'bridal') {
+      setBridalParty([...bridalParty, newMember]);
+    } else if (partyType === 'groom') {
+      setGroomParty([...groomParty, newMember]);
+    } else if (partyType === 'special') {
+      setSpecialRoles([...specialRoles, { ...newMember, age: "" }]);
+    }
+    setHasChanges(true);
+  };
+
+  // Remove party member
+  const removePartyMember = (partyType, index) => {
+    if (partyType === 'bridal') {
+      const updated = bridalParty.filter((_, i) => i !== index);
+      setBridalParty(updated);
+    } else if (partyType === 'groom') {
+      const updated = groomParty.filter((_, i) => i !== index);
+      setGroomParty(updated);
+    } else if (partyType === 'special') {
+      const updated = specialRoles.filter((_, i) => i !== index);
+      setSpecialRoles(updated);
+    }
+    setHasChanges(true);
+  };
+
+  // Update party member
+  const updatePartyMember = (partyType, index, field, value) => {
+    if (partyType === 'bridal') {
+      const updated = bridalParty.map((member, i) => 
+        i === index ? { ...member, [field]: value } : member
+      );
+      setBridalParty(updated);
+    } else if (partyType === 'groom') {
+      const updated = groomParty.map((member, i) => 
+        i === index ? { ...member, [field]: value } : member
+      );
+      setGroomParty(updated);
+    } else if (partyType === 'special') {
+      const updated = specialRoles.map((member, i) => 
+        i === index ? { ...member, [field]: value } : member
+      );
+      setSpecialRoles(updated);
+    }
+    setHasChanges(true);
+  };
+
+  const handleSave = () => {
+    // Update all party data
+    onSave('bridal_party', bridalParty);
+    onSave('groom_party', groomParty);
+    onSave('special_roles', specialRoles);
+    setHasChanges(false);
+  };
+
+  const PartyMemberForm = ({ member, index, partyType, isSpecial = false }) => (
+    <div className="p-6 rounded-2xl border-2 bg-white/10" style={{ borderColor: theme.accent + '40' }}>
+      <div className="flex justify-between items-start mb-4">
+        <h4 className="text-lg font-semibold" style={{ color: theme.primary }}>
+          {partyType === 'bridal' ? 'Bride\'s Party' : partyType === 'groom' ? 'Groom\'s Party' : 'Special Role'} Member #{index + 1}
+        </h4>
+        <button
+          onClick={() => removePartyMember(partyType, index)}
+          className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-colors"
+          style={{ color: '#EF4444' }}
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </div>
+      
+      <div className="grid md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-2" style={{ color: theme.text }}>
+            Name *
+          </label>
+          <input
+            type="text"
+            value={member.name}
+            onChange={(e) => updatePartyMember(partyType, index, 'name', e.target.value)}
+            className="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30"
+            style={{ color: theme.text }}
+            placeholder="Full name"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-2" style={{ color: theme.text }}>
+            Role *
+          </label>
+          <input
+            type="text"
+            value={member.role}
+            onChange={(e) => updatePartyMember(partyType, index, 'role', e.target.value)}
+            className="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30"
+            style={{ color: theme.text }}
+            placeholder="e.g., Maid of Honor, Best Man, Flower Girl"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2" style={{ color: theme.text }}>
+            Relationship *
+          </label>
+          <input
+            type="text"
+            value={member.relationship}
+            onChange={(e) => updatePartyMember(partyType, index, 'relationship', e.target.value)}
+            className="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30"
+            style={{ color: theme.text }}
+            placeholder="e.g., Sister, Best Friend, College Roommate"
+          />
+        </div>
+
+        {isSpecial && (
+          <div>
+            <label className="block text-sm font-medium mb-2" style={{ color: theme.text }}>
+              Age
+            </label>
+            <input
+              type="text"
+              value={member.age || ''}
+              onChange={(e) => updatePartyMember(partyType, index, 'age', e.target.value)}
+              className="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30"
+              style={{ color: theme.text }}
+              placeholder="e.g., Age 6"
+            />
+          </div>
+        )}
+
+        <div className={isSpecial ? "md:col-span-2" : ""}>
+          <label className="block text-sm font-medium mb-2" style={{ color: theme.text }}>
+            Photo URL (JPEG/PNG only) *
+          </label>
+          <input
+            type="url"
+            value={member.image}
+            onChange={(e) => updatePartyMember(partyType, index, 'image', e.target.value)}
+            className="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30"
+            style={{ color: theme.text }}
+            placeholder="https://images.unsplash.com/..."
+          />
+        </div>
+      </div>
+
+      <div className="mt-4">
+        <label className="block text-sm font-medium mb-2" style={{ color: theme.text }}>
+          Description *
+        </label>
+        <textarea
+          rows={3}
+          value={member.description}
+          onChange={(e) => updatePartyMember(partyType, index, 'description', e.target.value)}
+          className="w-full px-4 py-3 rounded-xl bg-white/20 border border-white/30 resize-none"
+          style={{ color: theme.text }}
+          placeholder="Write a brief description about this person and their role in your wedding..."
+        />
+      </div>
+
+      {member.image && (
+        <div className="mt-4">
+          <img
+            src={member.image}
+            alt="Preview"
+            className="w-20 h-20 object-cover rounded-full border-2"
+            style={{ borderColor: theme.accent }}
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="space-y-8 max-h-[70vh] overflow-y-auto">
+      <div className="text-center">
+        <p className="text-sm" style={{ color: theme.textLight }}>
+          Manage your wedding party members. Add photos, names, roles, and descriptions for each person who will be part of your special day.
+        </p>
+      </div>
+
+      {/* Bride's Party */}
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-semibold flex items-center gap-3" style={{ color: theme.primary }}>
+            <Heart className="w-6 h-6" style={{ color: theme.accent }} />
+            Bride's Party ({bridalParty.length})
+          </h3>
+          <button
+            onClick={() => addPartyMember('bridal')}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 hover:scale-105"
+            style={{ background: theme.gradientAccent, color: theme.primary }}
+          >
+            <Plus className="w-4 h-4" />
+            Add Member
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          {bridalParty.map((member, index) => (
+            <PartyMemberForm 
+              key={member.id || index} 
+              member={member} 
+              index={index} 
+              partyType="bridal" 
+            />
+          ))}
+          
+          {bridalParty.length === 0 && (
+            <div className="text-center py-8 border-2 border-dashed rounded-2xl" style={{ borderColor: theme.accent + '40' }}>
+              <p style={{ color: theme.textLight }}>No bride's party members added yet</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Groom's Party */}
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-semibold flex items-center gap-3" style={{ color: theme.primary }}>
+            <Users className="w-6 h-6" style={{ color: theme.accent }} />
+            Groom's Party ({groomParty.length})
+          </h3>
+          <button
+            onClick={() => addPartyMember('groom')}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 hover:scale-105"
+            style={{ background: theme.gradientAccent, color: theme.primary }}
+          >
+            <Plus className="w-4 h-4" />
+            Add Member
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          {groomParty.map((member, index) => (
+            <PartyMemberForm 
+              key={member.id || index} 
+              member={member} 
+              index={index} 
+              partyType="groom" 
+            />
+          ))}
+          
+          {groomParty.length === 0 && (
+            <div className="text-center py-8 border-2 border-dashed rounded-2xl" style={{ borderColor: theme.accent + '40' }}>
+              <p style={{ color: theme.textLight }}>No groom's party members added yet</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Special Roles */}
+      <div>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-semibold flex items-center gap-3" style={{ color: theme.primary }}>
+            <Star className="w-6 h-6" style={{ color: theme.accent }} />
+            Special Roles ({specialRoles.length})
+          </h3>
+          <button
+            onClick={() => addPartyMember('special')}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 hover:scale-105"
+            style={{ background: theme.gradientAccent, color: theme.primary }}
+          >
+            <Plus className="w-4 h-4" />
+            Add Member
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          {specialRoles.map((member, index) => (
+            <PartyMemberForm 
+              key={member.id || index} 
+              member={member} 
+              index={index} 
+              partyType="special" 
+              isSpecial={true}
+            />
+          ))}
+          
+          {specialRoles.length === 0 && (
+            <div className="text-center py-8 border-2 border-dashed rounded-2xl" style={{ borderColor: theme.accent + '40' }}>
+              <p style={{ color: theme.textLight }}>No special roles added yet (e.g., Flower Girl, Ring Bearer)</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Save Button */}
+      {hasChanges && (
+        <div className="flex justify-end pt-6 border-t border-white/20">
+          <button
+            onClick={handleSave}
+            className="flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
+            style={{
+              background: theme.gradientAccent,
+              color: theme.primary
+            }}
+          >
+            <Save className="w-4 h-4" />
+            <span>Save Wedding Party</span>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
 export default DashboardPage;
