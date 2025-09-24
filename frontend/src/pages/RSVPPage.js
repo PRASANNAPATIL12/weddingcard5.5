@@ -269,8 +269,8 @@ const RSVPPage = () => {
                 </label>
                 <input
                   type="text"
-                  name="dietary"
-                  value={formData.dietary}
+                  name="dietary_restrictions"
+                  value={formData.dietary_restrictions}
                   onChange={handleChange}
                   className="w-full px-6 py-4 rounded-xl bg-white/20 border border-white/30 focus:border-opacity-50 transition-all duration-300"
                   style={{ 
