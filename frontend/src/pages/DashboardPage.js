@@ -109,14 +109,44 @@ const DashboardPage = () => {
     setActiveForm(null);
   };
 
-  const handleDataChange = (field, value) => {
+  const handleDataChange = async (field, value) => {
     const updatedData = {
       ...weddingData,
       [field]: value
     };
     
-    // Use centralized save function - this will handle the MongoDB save
-    saveWeddingData(updatedData);
+    // Special handling for wedding party data
+    if (field === 'bridal_party' || field === 'groom_party' || field === 'special_roles') {
+      try {
+        const sessionId = localStorage.getItem('sessionId');
+        if (!sessionId) return;
+        
+        const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+        const response = await fetch(`${backendUrl}/api/wedding/party`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            session_id: sessionId,
+            [field]: value
+          })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+          // Update the wedding data in context with the returned data
+          saveWeddingData(data.wedding_data);
+        } else {
+          console.error('Failed to update wedding party:', data);
+        }
+      } catch (error) {
+        console.error('Error updating wedding party:', error);
+      }
+    } else {
+      // Use centralized save function for other fields
+      saveWeddingData(updatedData);
+    }
   };
 
   const handleLogout = () => {
