@@ -1216,4 +1216,228 @@ const OurStoryFormContent = ({ initialData, theme, onSave }) => {
   );
 };
 
+// RSVP Admin Content Component
+const RSVPAdminContent = ({ weddingData, theme }) => {
+  const [rsvps, setRsvps] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [stats, setStats] = useState({
+    total: 0,
+    attending: 0,
+    notAttending: 0,
+    totalGuests: 0
+  });
+
+  useEffect(() => {
+    fetchRSVPs();
+  }, [weddingData]);
+
+  const fetchRSVPs = async () => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
+      const weddingId = weddingData?.shareable_id || weddingData?.id;
+      
+      if (!weddingId) {
+        setError('Wedding ID not found');
+        return;
+      }
+      
+      const response = await fetch(`${backendUrl}/api/rsvp/shareable/${weddingId}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        setRsvps(data.rsvps);
+        
+        // Calculate statistics
+        const attending = data.rsvps.filter(rsvp => rsvp.attendance === 'yes');
+        const notAttending = data.rsvps.filter(rsvp => rsvp.attendance === 'no');
+        const totalGuests = attending.reduce((sum, rsvp) => sum + (rsvp.guest_count || 1), 0);
+        
+        setStats({
+          total: data.rsvps.length,
+          attending: attending.length,
+          notAttending: notAttending.length,
+          totalGuests: totalGuests
+        });
+      } else {
+        setError(data.message || 'Failed to fetch RSVPs');
+      }
+    } catch (err) {
+      console.error('Error fetching RSVPs:', err);
+      setError('Failed to load RSVP data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin w-8 h-8 border-4 border-current border-t-transparent rounded-full" style={{ color: theme.accent }}></div>
+        <span className="ml-3 text-lg" style={{ color: theme.text }}>Loading RSVPs...</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {error && (
+        <div className="p-4 rounded-xl bg-red-500/20 border border-red-500/30 flex items-center gap-3">
+          <X className="w-5 h-5 text-red-400" />
+          <span className="text-red-400">{error}</span>
+          <button 
+            onClick={fetchRSVPs}
+            className="ml-auto px-3 py-1 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-colors text-red-400 text-sm"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* RSVP Statistics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {[
+          { label: 'Total RSVPs', value: stats.total, icon: Mail, color: theme.accent },
+          { label: 'Attending', value: stats.attending, icon: CheckCircle, color: '#10B981' },
+          { label: 'Not Attending', value: stats.notAttending, icon: X, color: '#EF4444' },
+          { label: 'Total Guests', value: stats.totalGuests, icon: Users, color: theme.primary }
+        ].map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <div 
+              key={index}
+              className="p-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 text-center"
+            >
+              <Icon 
+                className="w-8 h-8 mx-auto mb-3" 
+                style={{ color: stat.color }}
+              />
+              <div className="text-2xl font-bold mb-1" style={{ color: theme.text }}>
+                {stat.value}
+              </div>
+              <div className="text-sm opacity-70" style={{ color: theme.textLight }}>
+                {stat.label}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* RSVP List */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h4 className="text-xl font-semibold" style={{ color: theme.primary }}>
+            Guest Responses ({rsvps.length})
+          </h4>
+          <button
+            onClick={fetchRSVPs}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+            style={{ color: theme.text }}
+          >
+            <Calendar className="w-4 h-4" />
+            Refresh
+          </button>
+        </div>
+
+        {rsvps.length === 0 ? (
+          <div className="text-center py-12">
+            <Mail className="w-16 h-16 mx-auto mb-4 opacity-40" style={{ color: theme.textLight }} />
+            <p className="text-lg mb-2" style={{ color: theme.text }}>No RSVPs Yet</p>
+            <p className="text-sm opacity-70" style={{ color: theme.textLight }}>
+              Guest responses will appear here once they submit their RSVPs.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4 max-h-96 overflow-y-auto">
+            {rsvps.map((rsvp, index) => (
+              <div 
+                key={rsvp.id || index}
+                className={`p-6 rounded-2xl border-2 transition-all duration-300 ${
+                  rsvp.attendance === 'yes' 
+                    ? 'bg-green-50 border-green-200' 
+                    : 'bg-red-50 border-red-200'
+                }`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        rsvp.attendance === 'yes' ? 'bg-green-500' : 'bg-red-500'
+                      }`} />
+                      <h5 className="text-lg font-semibold text-gray-800">
+                        {rsvp.guest_name}
+                      </h5>
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        rsvp.attendance === 'yes' 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {rsvp.attendance === 'yes' ? 'Attending' : 'Not Attending'}
+                      </span>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <Mail className="w-4 h-4" />
+                        <span>{rsvp.guest_email || 'No email provided'}</span>
+                      </div>
+                      {rsvp.guest_phone && (
+                        <div className="flex items-center gap-2">
+                          <Phone className="w-4 h-4" />
+                          <span>{rsvp.guest_phone}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4" />
+                        <span>{rsvp.guest_count || 1} guest{(rsvp.guest_count || 1) > 1 ? 's' : ''}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4" />
+                        <span>{formatDate(rsvp.submitted_at)}</span>
+                      </div>
+                    </div>
+
+                    {rsvp.dietary_restrictions && (
+                      <div className="mt-3 p-3 rounded-lg bg-orange-50 border border-orange-200">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Utensils className="w-4 h-4 text-orange-600" />
+                          <span className="text-sm font-medium text-orange-800">Dietary Restrictions:</span>
+                        </div>
+                        <p className="text-sm text-orange-700">{rsvp.dietary_restrictions}</p>
+                      </div>
+                    )}
+
+                    {rsvp.special_message && (
+                      <div className="mt-3 p-3 rounded-lg bg-blue-50 border border-blue-200">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Heart className="w-4 h-4 text-blue-600" />
+                          <span className="text-sm font-medium text-blue-800">Message:</span>
+                        </div>
+                        <p className="text-sm text-blue-700">{rsvp.special_message}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export default DashboardPage;
