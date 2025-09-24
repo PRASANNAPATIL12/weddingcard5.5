@@ -163,7 +163,7 @@ const DashboardPage = () => {
   const editSections = [
     { id: 'home', label: 'Home', icon: Heart, description: 'Edit couple names, date, venue' },
     { id: 'story', label: 'Our Story', icon: Heart, description: 'Timeline and love story' },
-    { id: 'rsvp', label: 'RSVP', icon: Mail, description: 'RSVP form settings' },
+    { id: 'rsvp', label: 'RSVP Admin', icon: Mail, description: 'Manage RSVP responses' },
     { id: 'schedule', label: 'Schedule', icon: Calendar, description: 'Wedding day timeline' },
     { id: 'gallery', label: 'Gallery', icon: Image, description: 'Photo gallery' },
     { id: 'party', label: 'Wedding Party', icon: Users, description: 'Bridal and groom party' },
