@@ -124,65 +124,65 @@ backend:
           comment: "Successfully cloned repository, set up environment variables, installed dependencies, and got application running"
 
   - task: "Add guestbook API endpoints"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
-        - working: "NA"
+        - working: true
           agent: "main"
-          comment: "Need to implement POST and GET endpoints for guestbook messages"
+          comment: "Implemented POST /api/guestbook and GET /api/guestbook/{wedding_id} and GET /api/guestbook/shareable/{shareable_id} endpoints with MongoDB storage"
 
   - task: "Add wedding party API endpoints"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
-        - working: "NA"
+        - working: true
           agent: "main"
-          comment: "Need to implement endpoints to manage bridal party, groom party, and special roles"
+          comment: "Implemented PUT /api/wedding/party endpoint to manage bridal_party, groom_party, and special_roles with MongoDB storage"
 
 frontend:
   - task: "Make guestbook functional"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: true
     file: "/app/frontend/src/pages/GuestbookPage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
-        - working: "NA"
+        - working: true
           agent: "main"
-          comment: "Currently shows static messages and alert only. Need to integrate with backend API"
+          comment: "Guestbook form now submits to backend API, stores messages in MongoDB, and displays real-time messages with proper formatting"
 
   - task: "Make wedding party editable"
-    implemented: false
-    working: "NA"
-    file: "/app/frontend/src/pages/PartyPage.js"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/DashboardPage.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
-        - working: "NA"
+        - working: true
           agent: "main"
-          comment: "Currently displays static data. Need to make it editable from dashboard with form interface"
+          comment: "Added comprehensive wedding party management form in dashboard with support for bridal party, groom party, and special roles. Includes photo upload (JPEG/PNG), member details, and MongoDB integration"
 
   - task: "Fix theme switching in dashboard"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: true
     file: "/app/frontend/src/pages/DashboardPage.js"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
-        - working: "NA"
+        - working: true
           agent: "main"
-          comment: "Theme selection currently doesn't apply to entire dashboard. Need to fix theme context propagation"
+          comment: "Fixed theme switching to use global theme context instead of local state. Theme changes now apply to entire dashboard interface immediately"
 
 metadata:
   created_by: "main_agent"
