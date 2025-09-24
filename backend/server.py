@@ -285,6 +285,7 @@ async def register(user_data: UserRegister):
         gallery_photos=[],
         bridal_party=[],
         groom_party=[],
+        special_roles=[],
         registry_items=[],
         honeymoon_fund={},
         faqs=[],
