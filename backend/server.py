@@ -86,6 +86,18 @@ class User(BaseModel):
     password: str  # Simple plain text password
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+class RSVPResponse(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    wedding_id: str
+    guest_name: str
+    guest_email: str
+    guest_phone: Optional[str] = ""
+    attendance: str  # "yes" or "no"
+    guest_count: int = 1
+    dietary_restrictions: Optional[str] = ""
+    special_message: Optional[str] = ""
+    submitted_at: datetime = Field(default_factory=datetime.utcnow)
+
 class WeddingData(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
@@ -104,6 +116,7 @@ class WeddingData(BaseModel):
     honeymoon_fund: dict = {}
     faqs: List[dict] = []
     theme: str = "classic"
+    rsvp_responses: List[dict] = []  # Store RSVP responses
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
