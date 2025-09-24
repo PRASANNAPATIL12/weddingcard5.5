@@ -6,8 +6,10 @@ import { Heart, Star, Crown, Users } from 'lucide-react';
 const PartyPage = () => {
   const { themes, currentTheme } = useAppTheme();
   const theme = themes[currentTheme];
+  const { weddingData } = useUserData();
 
-  const brideParty = [
+  // Use dynamic data from context or fallback to default data
+  const brideParty = weddingData?.bridal_party || [
     {
       name: "Emily Johnson",
       role: "Maid of Honor",
@@ -38,7 +40,7 @@ const PartyPage = () => {
     }
   ];
 
-  const groomParty = [
+  const groomParty = weddingData?.groom_party || [
     {
       name: "David Thompson",
       role: "Best Man",
@@ -69,7 +71,7 @@ const PartyPage = () => {
     }
   ];
 
-  const specialRoles = [
+  const specialRoles = weddingData?.special_roles || [
     {
       name: "Lily Johnson",
       role: "Flower Girl",
