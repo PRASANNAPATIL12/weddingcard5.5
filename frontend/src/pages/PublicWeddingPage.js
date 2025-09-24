@@ -521,6 +521,26 @@ const PublicWeddingPage = () => {
         </div>
       )}
 
+  // RSVP Section Component - Import RSVPPage
+  const RSVPSection = () => {
+    const RSVPPage = React.lazy(() => import('./RSVPPage'));
+    
+    return (
+      <div className="pt-24 pb-16">
+        <div className="max-w-4xl mx-auto px-4">
+          <React.Suspense fallback={
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin w-8 h-8 border-4 border-current border-t-transparent rounded-full" style={{ color: theme.accent }}></div>
+              <span className="ml-3 text-lg" style={{ color: theme.text }}>Loading RSVP form...</span>
+            </div>
+          }>
+            <RSVPPage />
+          </React.Suspense>
+        </div>
+      </div>
+    );
+  };
+
   // Render content based on active section
   const renderActiveSection = () => {
     switch (activeSection) {
@@ -528,6 +548,8 @@ const PublicWeddingPage = () => {
         return <HomeSection />;
       case 'story':
         return <StorySection />;
+      case 'rsvp':
+        return <RSVPSection />;
       case 'schedule':
         return <ScheduleSection />;
       case 'gallery':
