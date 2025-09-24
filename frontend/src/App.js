@@ -167,6 +167,71 @@ function App() {
                 <GuestbookPage />
               </>
             } />
+
+            {/* Username-based routes - User's personalized wedding pages */}
+            <Route path="/:username" element={
+              <>
+                <Navigation />
+                <FloatingTemplateButton />
+                <HomePage isUserPage={true} />
+              </>
+            } />
+            <Route path="/:username/rsvp" element={
+              <>
+                <Navigation />
+                <FloatingTemplateButton />
+                <RSVPPage isUserPage={true} />
+              </>
+            } />
+            <Route path="/:username/story" element={
+              <>
+                <Navigation />
+                <FloatingTemplateButton />
+                <StoryPage isUserPage={true} />
+              </>  
+            } />
+            <Route path="/:username/gallery" element={
+              <>
+                <Navigation />
+                <FloatingTemplateButton />
+                <GalleryPage isUserPage={true} />
+              </>
+            } />
+            <Route path="/:username/party" element={
+              <>
+                <Navigation />
+                <FloatingTemplateButton />
+                <PartyPage isUserPage={true} />
+              </>
+            } />
+            <Route path="/:username/schedule" element={
+              <>
+                <Navigation />
+                <FloatingTemplateButton />
+                <SchedulePage isUserPage={true} />
+              </>
+            } />
+            <Route path="/:username/registry" element={
+              <>
+                <Navigation />
+                <FloatingTemplateButton />
+                <RegistryPage isUserPage={true} />
+              </>
+            } />
+            <Route path="/:username/faq" element={
+              <>
+                <Navigation />
+                <FloatingTemplateButton />
+                <FAQPage isUserPage={true} />
+              </>
+            } />
+            <Route path="/:username/guestbook" element={
+              <>
+                <Navigation />
+                <FloatingTemplateButton />
+                <GuestbookPage isUserPage={true} />
+              </>
+            } />
           </Routes>
         </Router>
         </div>
