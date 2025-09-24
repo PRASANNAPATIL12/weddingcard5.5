@@ -278,6 +278,7 @@ const PublicWeddingPage = () => {
           {/* RSVP and Event Details Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
             <button
+              onClick={() => setActiveSection('rsvp')}
               className="px-8 py-4 rounded-full text-white font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg"
               style={{ background: theme.gradientAccent }}
             >
