@@ -283,61 +283,90 @@ const GuestbookPage = () => {
           </div>
 
           <div className="space-y-6">
-            {messages.map((message) => (
-              <div 
-                key={message.id}
-                className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 transition-all duration-500 hover:-translate-y-1 hover:shadow-xl"
-              >
-                <div className="flex items-start gap-4">
-                  <div 
-                    className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-semibold text-lg"
-                    style={{ 
-                      background: theme.gradientAccent,
-                      color: theme.primary 
-                    }}
-                  >
-                    {message.name.charAt(0)}
-                  </div>
-                  
-                  <div className="flex-1">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
-                      <div>
-                        <h3 
-                          className="text-xl font-semibold"
-                          style={{ color: theme.primary }}
-                        >
-                          {message.name}
-                        </h3>
-                        {message.relationship && (
-                          <p 
-                            className="text-sm opacity-80"
-                            style={{ color: theme.textLight }}
-                          >
-                            {message.relationship}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                        <Star className="w-4 h-4" style={{ color: theme.accent }} />
-                        <span 
-                          className="text-sm"
-                          style={{ color: theme.textLight }}
-                        >
-                          {message.date}
-                        </span>
-                      </div>
+            {loading ? (
+              <div className="text-center py-12">
+                <Loader className="w-8 h-8 mx-auto mb-4 animate-spin" style={{ color: theme.accent }} />
+                <p className="text-lg" style={{ color: theme.text }}>Loading messages...</p>
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <p className="text-lg mb-4" style={{ color: theme.text }}>Unable to load messages</p>
+                <button
+                  onClick={fetchMessages}
+                  className="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
+                  style={{
+                    background: theme.gradientAccent,
+                    color: theme.primary
+                  }}
+                >
+                  Try Again
+                </button>
+              </div>
+            ) : messages.length === 0 ? (
+              <div className="text-center py-12">
+                <MessageCircle className="w-16 h-16 mx-auto mb-4 opacity-40" style={{ color: theme.textLight }} />
+                <p className="text-lg mb-2" style={{ color: theme.text }}>No Messages Yet</p>
+                <p className="text-sm opacity-70" style={{ color: theme.textLight }}>
+                  Be the first to leave a message for {weddingData?.couple_name_1 || 'Sarah'} & {weddingData?.couple_name_2 || 'Michael'}!
+                </p>
+              </div>
+            ) : (
+              messages.map((message) => (
+                <div 
+                  key={message.id}
+                  className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 transition-all duration-500 hover:-translate-y-1 hover:shadow-xl"
+                >
+                  <div className="flex items-start gap-4">
+                    <div 
+                      className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-semibold text-lg"
+                      style={{ 
+                        background: theme.gradientAccent,
+                        color: theme.primary 
+                      }}
+                    >
+                      {message.name.charAt(0)}
                     </div>
                     
-                    <p 
-                      className="text-lg leading-relaxed"
-                      style={{ color: theme.textLight }}
-                    >
-                      "{message.message}"
-                    </p>
+                    <div className="flex-1">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+                        <div>
+                          <h3 
+                            className="text-xl font-semibold"
+                            style={{ color: theme.primary }}
+                          >
+                            {message.name}
+                          </h3>
+                          {message.relationship && (
+                            <p 
+                              className="text-sm opacity-80"
+                              style={{ color: theme.textLight }}
+                            >
+                              {message.relationship}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 mt-2 sm:mt-0">
+                          <Star className="w-4 h-4" style={{ color: theme.accent }} />
+                          <span 
+                            className="text-sm"
+                            style={{ color: theme.textLight }}
+                          >
+                            {formatDate(message.created_at)}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <p 
+                        className="text-lg leading-relaxed"
+                        style={{ color: theme.textLight }}
+                      >
+                        "{message.message}"
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
