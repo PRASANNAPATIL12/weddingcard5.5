@@ -299,7 +299,7 @@ const RSVPPage = () => {
                   color: theme.text,
                   borderColor: `${theme.accent}40`
                 }}
-                placeholder="Share your well wishes with Sarah & Michael..."
+                placeholder={`Share your well wishes with ${weddingData?.couple_name_1 || 'the couple'} & ${weddingData?.couple_name_2 || ''}...`}
               />
             </div>
 
