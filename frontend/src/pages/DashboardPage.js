@@ -730,7 +730,7 @@ const DashboardPage = () => {
 };
 
 // Form Popup Component
-const FormPopup = ({ sectionId, onClose, onSubmit, initialData, theme }) => {
+const FormPopup = ({ sectionId, onClose, onSubmit, initialData, theme, currentTheme, setCurrentTheme }) => {
   const [formData, setFormData] = useState({});
 
   const handleSubmit = (e) => {
