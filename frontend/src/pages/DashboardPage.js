@@ -1784,5 +1784,6 @@ const WeddingPartyFormContent = ({ initialData, theme, onSave }) => {
       )}
     </div>
   );
+};
 
 export default DashboardPage;
