@@ -133,6 +133,7 @@ class WeddingDataCreate(BaseModel):
     gallery_photos: List[dict] = []
     bridal_party: List[dict] = []
     groom_party: List[dict] = []
+    special_roles: List[dict] = []  # Added special roles field
     registry_items: List[dict] = []
     honeymoon_fund: dict = {}
     faqs: List[dict] = []
