@@ -529,6 +529,7 @@ async def get_wedding_by_shareable_id(shareable_id: str):
         "gallery_photos": [],
         "bridal_party": [],
         "groom_party": [],
+        "special_roles": [],
         "registry_items": [],
         "honeymoon_fund": {},
         "faqs": [],
