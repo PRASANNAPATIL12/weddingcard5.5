@@ -48,7 +48,7 @@ import FAQPage from './FAQPage';
 import GuestbookPage from './GuestbookPage';
 
 const DashboardPage = () => {
-  const { themes } = useAppTheme();
+  const { themes, currentTheme, setCurrentTheme } = useAppTheme();
   const navigate = useNavigate();
   
   // Use centralized user data context instead of local state
@@ -70,7 +70,6 @@ const DashboardPage = () => {
   const [editDropdownOpen, setEditDropdownOpen] = useState(true);
   const [previewMode, setPreviewMode] = useState('desktop');
   const [currentPreviewPage, setCurrentPreviewPage] = useState('home');
-  const [currentTheme, setCurrentTheme] = useState('classic');
   const [weddingUrl, setWeddingUrl] = useState('');
   const [copied, setCopied] = useState(false);
   const [autoSaving, setAutoSaving] = useState(false);
