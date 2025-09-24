@@ -391,7 +391,7 @@ const GuestbookPage = () => {
               style={{ color: theme.textLight }}
             >
               With all our love,<br />
-              Sarah & Michael
+              {weddingData?.couple_name_1 || 'Sarah'} & {weddingData?.couple_name_2 || 'Michael'}
             </p>
           </div>
         </div>
