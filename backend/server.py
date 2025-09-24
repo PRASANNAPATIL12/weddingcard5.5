@@ -614,6 +614,134 @@ async def get_rsvps_by_shareable_id(shareable_id: str):
     
     return {"success": True, "rsvps": response_data, "total_count": len(response_data)}
 
+# Guestbook Models
+class GuestbookMessage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    wedding_id: str
+    name: str
+    relationship: Optional[str] = ""
+    message: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+# Guestbook Endpoints
+@api_router.post("/guestbook")
+async def create_guestbook_message(message_data: dict):
+    """Create a new guestbook message"""
+    users_coll, weddings_coll = await get_collections()
+    
+    # Create guestbook message
+    guestbook_message = GuestbookMessage(
+        wedding_id=message_data.get('wedding_id', ''),
+        name=message_data.get('name', ''),
+        relationship=message_data.get('relationship', ''),
+        message=message_data.get('message', '')
+    )
+    
+    # Convert to dict
+    message_dict = guestbook_message.dict()
+    message_dict["created_at"] = message_dict["created_at"].isoformat()
+    
+    # Store message in guestbook collection
+    guestbook_collection = database.guestbook
+    await guestbook_collection.insert_one(message_dict)
+    
+    return {"success": True, "message": "Guestbook message added successfully", "message_id": guestbook_message.id}
+
+@api_router.get("/guestbook/{wedding_id}")
+async def get_guestbook_messages(wedding_id: str):
+    """Get all guestbook messages for a specific wedding"""
+    users_coll, weddings_coll = await get_collections()
+    
+    # Get messages for this wedding
+    guestbook_collection = database.guestbook
+    messages = await guestbook_collection.find({"wedding_id": wedding_id}).sort("created_at", -1).to_list(length=None)
+    
+    # Remove _id from response and format dates
+    response_data = []
+    for msg in messages:
+        clean_msg = {k: v for k, v in msg.items() if k != "_id"}
+        response_data.append(clean_msg)
+    
+    return {"success": True, "messages": response_data, "total_count": len(response_data)}
+
+@api_router.get("/guestbook/shareable/{shareable_id}")  
+async def get_guestbook_by_shareable_id(shareable_id: str):
+    """Get guestbook messages using shareable ID"""
+    users_coll, weddings_coll = await get_collections()
+    
+    # First find the wedding by shareable_id
+    wedding = await weddings_coll.find_one({"shareable_id": shareable_id})
+    
+    if not wedding:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Wedding not found"
+        )
+    
+    # Get guestbook messages for this wedding
+    guestbook_collection = database.guestbook
+    messages = await guestbook_collection.find({"wedding_id": wedding["id"]}).sort("created_at", -1).to_list(length=None)
+    
+    # Remove _id from response
+    response_data = []
+    for msg in messages:
+        clean_msg = {k: v for k, v in msg.items() if k != "_id"}
+        response_data.append(clean_msg)
+    
+    return {"success": True, "messages": response_data, "total_count": len(response_data)}
+
+# Wedding Party Management Endpoints
+@api_router.put("/wedding/party")
+async def update_wedding_party(request_data: dict):
+    """Update wedding party data (bridal_party, groom_party, special_roles)"""
+    session_id = request_data.get('session_id')
+    if not session_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Session ID required"
+        )
+    
+    current_user = await get_current_user_simple(session_id)
+    users_coll, weddings_coll = await get_collections()
+    
+    # Find existing wedding
+    existing_wedding = await weddings_coll.find_one({"user_id": current_user.id})
+    if not existing_wedding:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Wedding data not found"
+        )
+    
+    # Prepare update data with only wedding party fields
+    update_fields = {}
+    if 'bridal_party' in request_data:
+        update_fields['bridal_party'] = request_data['bridal_party']
+    if 'groom_party' in request_data:
+        update_fields['groom_party'] = request_data['groom_party']
+    if 'special_roles' in request_data:
+        update_fields['special_roles'] = request_data['special_roles']
+    
+    update_fields["updated_at"] = datetime.utcnow().isoformat()
+    
+    # Update in MongoDB
+    await weddings_coll.update_one(
+        {"user_id": current_user.id},
+        {"$set": update_fields}
+    )
+    
+    # Get updated wedding data
+    updated_wedding = await weddings_coll.find_one({"user_id": current_user.id})
+    
+    # Also update JSON backup
+    weddings = load_json_file(WEDDINGS_FILE)
+    if updated_wedding["id"] in weddings:
+        weddings[updated_wedding["id"]].update(update_fields)
+        save_json_file(WEDDINGS_FILE, weddings)
+    
+    # Remove _id from response
+    response_data = {k: v for k, v in updated_wedding.items() if k != "_id"}
+    return {"success": True, "wedding_data": response_data}
+
 # Test endpoint to verify connectivity
 @api_router.get("/test")
 async def test_endpoint():
